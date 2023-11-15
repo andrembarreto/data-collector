@@ -5,9 +5,20 @@ MobilityData::MobilityData(QObject *parent)
 
     _accelerometer.setAccelerationMode(QAccelerometer::User);
 
-    QObject::connect(&_accelerometer, &QAccelerometer::readingChanged, this, [this](){
+    connect(&_accelerometer, &QAccelerometer::readingChanged, this, [this](){
         registerAccelerometerReading(_accelerometer.reading());
     });
+
+    _source = QGeoPositionInfoSource::createDefaultSource(this);
+
+    if(_source) {
+        connect(_source, &QGeoPositionInfoSource::positionUpdated, this, &MobilityData::registerGeolocation);
+        connect(_source, &QGeoPositionInfoSource::errorOccurred, this, &MobilityData::handleGeolocationError);
+        _source->setUpdateInterval(1000);
+    }
+    else {
+        emit noAccessToGeolocation();
+    }
 }
 
 void MobilityData::registerAccelerometerReading(const QAccelerometerReading &reading) {
@@ -17,7 +28,7 @@ void MobilityData::registerAccelerometerReading(const QAccelerometerReading &rea
     emit accelerationValuesChanged(_accelerationValues);
 }
 
-void MobilityData::registerGeolocation(const QGeoLocation &geolocation) {
+void MobilityData::registerGeolocation(const QGeoPositionInfo &geolocation) {
 
 }
 

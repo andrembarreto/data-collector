@@ -15,7 +15,8 @@ public:
 
 public slots:
     void registerAccelerometerReading(const QAccelerometerReading &reading);
-    void registerGeolocation(const QGeoLocation &geolocation);
+    void registerGeolocation(const QGeoPositionInfo &geolocation);
+    void handleGeolocationError(const QGeoPositionInfoSource::Error error);
     bool sendRegisteredData();
     void discardRegisteredData();
 
@@ -23,11 +24,13 @@ public slots:
 
 signals:
     void accelerationValuesChanged(QVariantMap newValues);
+    void noAccessToGeolocation();
 
 private:
     QVariantMap _mobilityData;
     QVariantMap _accelerationValues;
     QAccelerometer _accelerometer;
+    QGeoPositionInfoSource *_source;
 };
 
 #endif // MOBILITYDATA_H
