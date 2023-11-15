@@ -19,10 +19,15 @@ public slots:
     bool sendRegisteredData();
     void discardRegisteredData();
 
+    QVariantMap getAccelerationValues();
+
 signals:
+    void accelerationValuesChanged(QVariantMap newValues);
 
 private:
     QVariantMap _mobilityData;
+    QVariantMap _accelerationValues;
+    QAccelerometer _accelerometer;
 };
 
 #endif // MOBILITYDATA_H
