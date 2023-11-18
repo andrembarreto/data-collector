@@ -20,6 +20,9 @@ public slots:
     bool sendRegisteredData();
     void discardRegisteredData();
 
+    void startCollecting();
+    void stopCollecting();
+
     QVariantMap getAccelerationValues();
 
 signals:

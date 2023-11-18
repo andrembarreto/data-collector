@@ -32,6 +32,20 @@ void MobilityData::registerGeolocation(const QGeoPositionInfo &geolocation) {
 
 }
 
+void MobilityData::handleGeolocationError(const QGeoPositionInfoSource::Error error) {
+
+}
+
+void MobilityData::startCollecting() {
+    _accelerometer.start();
+    _source->startUpdates();
+}
+
+void MobilityData::stopCollecting() {
+    _accelerometer.stop();
+    _source->stopUpdates();
+}
+
 bool MobilityData::sendRegisteredData() {
     return false;
 }
