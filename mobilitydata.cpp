@@ -11,15 +11,14 @@ MobilityData::MobilityData(QObject *parent)
         registerAccelerometerReading(_accelerometer.reading());
     });
 
+    _accessToPosition = false;
     _source = QGeoPositionInfoSource::createDefaultSource(this);
 
     if(_source) {
+        _accessToPosition = true;
         connect(_source, &QGeoPositionInfoSource::positionUpdated, this, &MobilityData::registerGeolocation);
         connect(_source, &QGeoPositionInfoSource::errorOccurred, this, &MobilityData::handleGeolocationError);
         _source->setUpdateInterval(1000);
-    }
-    else {
-        emit noAccessToGeolocation();
     }
 }
 

@@ -36,6 +36,8 @@ private:
     QVariantMap _accelerationValues;
     QAccelerometer _accelerometer;
     QGeoPositionInfoSource *_source;
+
+    bool _accessToPosition;
 };
 
 #endif // MOBILITYDATA_H
