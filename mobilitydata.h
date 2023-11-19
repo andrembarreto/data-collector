@@ -47,6 +47,9 @@ private:
 
     bool m_accessToPosition;
     bool m_currentlyCollecting;
+
+    void initializeAccelerationValues();
+    void initializeCoordinateValues();
 };
 
 #endif // MOBILITYDATA_H

@@ -4,6 +4,8 @@ MobilityData::MobilityData(QObject *parent)
     : QObject{parent} {
 
     _mobilityData = new QVector<QJsonObject>;
+    initializeAccelerationValues();
+    initializeCoordinateValues();
 
     _accelerometer.setAccelerationMode(QAccelerometer::User);
 
@@ -82,6 +84,16 @@ QVariantMap MobilityData::getAccelerationValues() {
 
 QVariantMap MobilityData::getCurrentCoordinates() {
     return m_currentCoordinates;
+}
+
+void MobilityData::initializeAccelerationValues() {
+    m_accelerationValues = {{"x", ""}, {"y", ""}, {"z", ""}};
+    emit accelerationValuesChanged(m_accelerationValues);
+}
+
+void MobilityData::initializeCoordinateValues() {
+    m_currentCoordinates = {{"latitude", ""}, {"longitude", ""}};
+    emit currentCoordinatesChanged(m_currentCoordinates);
 }
 
 MobilityData::~MobilityData() {
