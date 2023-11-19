@@ -11,11 +11,13 @@ MobilityData::MobilityData(QObject *parent)
         registerAccelerometerReading(_accelerometer.reading());
     });
 
-    _accessToPosition = false;
+    m_accessToPosition = false;
     _source = QGeoPositionInfoSource::createDefaultSource(this);
 
     if(_source) {
-        _accessToPosition = true;
+        m_accessToPosition = true;
+        emit accessToPositionChanged(m_accessToPosition);
+
         connect(_source, &QGeoPositionInfoSource::positionUpdated, this, &MobilityData::registerGeolocation);
         connect(_source, &QGeoPositionInfoSource::errorOccurred, this, &MobilityData::handleGeolocationError);
         _source->setUpdateInterval(1000);
@@ -23,24 +25,24 @@ MobilityData::MobilityData(QObject *parent)
 }
 
 void MobilityData::registerAccelerometerReading(const QAccelerometerReading &reading) {
-    _accelerationValues.insert("x", reading.x());
-    _accelerationValues.insert("y", reading.y());
-    _accelerationValues.insert("z", reading.z());
-    emit accelerationValuesChanged(_accelerationValues);
+    m_accelerationValues.insert("x", reading.x());
+    m_accelerationValues.insert("y", reading.y());
+    m_accelerationValues.insert("z", reading.z());
+    emit accelerationValuesChanged(m_accelerationValues);
 }
 
 void MobilityData::registerGeolocation(const QGeoPositionInfo &geolocation) {
-    _currentCoordinates.insert("latitude", geolocation.coordinate().latitude());
-    _currentCoordinates.insert("longitude", geolocation.coordinate().longitude());
-    emit currentCoordinatesChanged(_currentCoordinates);
+    m_currentCoordinates.insert("latitude", geolocation.coordinate().latitude());
+    m_currentCoordinates.insert("longitude", geolocation.coordinate().longitude());
+    emit currentCoordinatesChanged(m_currentCoordinates);
 
     QJsonObject data {
         {"timestamp", geolocation.timestamp().toString()},
         {"latitude", geolocation.coordinate().latitude()},
         {"longitude", geolocation.coordinate().longitude()},
-        {"acceleration_x", _accelerationValues.value("x").toJsonValue()},
-        {"acceleration_y", _accelerationValues.value("y").toJsonValue()},
-        {"acceleration_z", _accelerationValues.value("z").toJsonValue()}
+        {"acceleration_x", m_accelerationValues.value("x").toJsonValue()},
+        {"acceleration_y", m_accelerationValues.value("y").toJsonValue()},
+        {"acceleration_z", m_accelerationValues.value("z").toJsonValue()}
     };
 
     _mobilityData->append(data);
@@ -69,7 +71,11 @@ void MobilityData::discardRegisteredData() {
 }
 
 QVariantMap MobilityData::getAccelerationValues() {
-    return _accelerationValues;
+    return m_accelerationValues;
+}
+
+QVariantMap MobilityData::getCurrentCoordinates() {
+    return m_currentCoordinates;
 }
 
 MobilityData::~MobilityData() {
