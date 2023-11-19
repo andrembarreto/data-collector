@@ -38,4 +38,100 @@ Window {
             }
         }
     }
+
+    Rectangle {
+        id: root
+        anchors.fill: parent
+        color: "lightblue"
+
+        Text {
+            id: title
+
+            anchors {
+                top: parent.top
+                horizontalCenter: parent.horizontalCenter
+            }
+
+            width: parent.width
+            height: parent.height * 0.075
+
+            text: "Coletor de Dados"
+            font.pointSize: 12
+            horizontalAlignment: Text.AlignHCenter
+            verticalAlignment: Text.AlignVCenter
+        }
+
+        Column {
+            id: dataColumn
+
+            anchors {
+                top: title.bottom
+                topMargin: parent.height * 0.025
+                horizontalCenter: parent.horizontalCenter
+            }
+
+            width: parent.width
+            height: parent.height * 0.75
+
+            spacing: height * 0.05
+
+            Repeater {
+                model: ["x", "y", "z"]
+                delegate: Rectangle {
+                    required property string modelData
+
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    width: parent.width * 0.3
+                    height: parent.height * 0.16
+                    radius: height * 0.05
+                    color: "white"
+
+                    Text {
+                        anchors.fill: parent
+                        text: "Aceleração " + parent.modelData + ":"
+                        horizontalAlignment: Text.AlignHCenter
+                        verticalAlignment: Text.AlignVCenter
+                    }
+                }
+            }
+
+            Repeater {
+                model: ["latitude", "longitude"]
+                delegate: Rectangle {
+                    required property string modelData
+
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    width: parent.width * 0.3
+                    height: parent.height * 0.16
+                    radius: height * 0.05
+                    color: "white"
+
+                    Text {
+                        anchors.fill: parent
+                        text: modelData + ":"
+                        horizontalAlignment: Text.AlignHCenter
+                        verticalAlignment: Text.AlignVCenter
+                    }
+                }
+            }
+        }
+
+        Rectangle {
+            anchors {
+                bottom: parent.bottom
+                horizontalCenter: parent.horizontalCenter
+            }
+
+            width: parent.width
+            height: parent.height * 0.1
+
+            Button {
+                anchors.centerIn: parent
+                width: parent.width * 0.3
+                height: parent.height * 0.8
+
+                text: "Iniciar jornada"
+            }
+        }
+    }
 }
