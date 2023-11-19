@@ -14,6 +14,7 @@ class MobilityData : public QObject
     Q_PROPERTY(QVariantMap accelerationValues READ getAccelerationValues NOTIFY accelerationValuesChanged)
     Q_PROPERTY(QVariantMap currentCoordinates READ getCurrentCoordinates NOTIFY currentCoordinatesChanged)
     Q_PROPERTY(bool accessToPosition MEMBER m_accessToPosition NOTIFY accessToPositionChanged)
+    Q_PROPERTY(bool currentlyCollecting MEMBER m_currentlyCollecting NOTIFY collectionStatusChanged)
 public:
     explicit MobilityData(QObject *parent = nullptr);
     ~MobilityData();
@@ -35,6 +36,7 @@ signals:
     void accelerationValuesChanged(QVariantMap newValues);
     void currentCoordinatesChanged(QVariantMap newValues);
     void accessToPositionChanged(bool accessStatus);
+    void collectionStatusChanged(bool collectionStatus);
 
 private:
     QVector<QJsonObject> *_mobilityData;
@@ -44,6 +46,7 @@ private:
     QGeoPositionInfoSource *_source;
 
     bool m_accessToPosition;
+    bool m_currentlyCollecting;
 };
 
 #endif // MOBILITYDATA_H

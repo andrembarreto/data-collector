@@ -55,11 +55,17 @@ void MobilityData::handleGeolocationError(const QGeoPositionInfoSource::Error er
 void MobilityData::startCollecting() {
     _accelerometer.start();
     _source->startUpdates();
+
+    m_currentlyCollecting = true;
+    emit collectionStatusChanged(m_currentlyCollecting);
 }
 
 void MobilityData::stopCollecting() {
     _accelerometer.stop();
     _source->stopUpdates();
+
+    m_currentlyCollecting = false;
+    emit collectionStatusChanged(m_currentlyCollecting);
 }
 
 bool MobilityData::sendRegisteredData() {
