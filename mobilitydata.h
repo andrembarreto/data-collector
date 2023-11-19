@@ -29,11 +29,12 @@ public slots:
 
 signals:
     void accelerationValuesChanged(QVariantMap newValues);
-    void noAccessToGeolocation();
+    void currentCoordinatesChanged(QVariantMap newValues);
 
 private:
     QVector<QJsonObject> *_mobilityData;
     QVariantMap _accelerationValues;
+    QVariantMap _currentCoordinates;
     QAccelerometer _accelerometer;
     QGeoPositionInfoSource *_source;
 

@@ -30,6 +30,10 @@ void MobilityData::registerAccelerometerReading(const QAccelerometerReading &rea
 }
 
 void MobilityData::registerGeolocation(const QGeoPositionInfo &geolocation) {
+    _currentCoordinates.insert("latitude", geolocation.coordinate().latitude());
+    _currentCoordinates.insert("longitude", geolocation.coordinate().longitude());
+    emit currentCoordinatesChanged(_currentCoordinates);
+
     QJsonObject data {
         {"timestamp", geolocation.timestamp().toString()},
         {"latitude", geolocation.coordinate().latitude()},
