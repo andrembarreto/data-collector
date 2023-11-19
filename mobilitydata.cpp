@@ -3,6 +3,8 @@
 MobilityData::MobilityData(QObject *parent)
     : QObject{parent} {
 
+    _mobilityData = new QVector<QJsonObject>;
+
     _accelerometer.setAccelerationMode(QAccelerometer::User);
 
     connect(&_accelerometer, &QAccelerometer::readingChanged, this, [this](){
@@ -29,7 +31,16 @@ void MobilityData::registerAccelerometerReading(const QAccelerometerReading &rea
 }
 
 void MobilityData::registerGeolocation(const QGeoPositionInfo &geolocation) {
+    QJsonObject data {
+        {"timestamp", geolocation.timestamp().toString()},
+        {"latitude", geolocation.coordinate().latitude()},
+        {"longitude", geolocation.coordinate().longitude()},
+        {"acceleration_x", _accelerationValues.value("x").toJsonValue()},
+        {"acceleration_y", _accelerationValues.value("y").toJsonValue()},
+        {"acceleration_z", _accelerationValues.value("z").toJsonValue()}
+    };
 
+    _mobilityData->append(data);
 }
 
 void MobilityData::handleGeolocationError(const QGeoPositionInfoSource::Error error) {
@@ -51,9 +62,13 @@ bool MobilityData::sendRegisteredData() {
 }
 
 void MobilityData::discardRegisteredData() {
-
+    _mobilityData->clear();
 }
 
 QVariantMap MobilityData::getAccelerationValues() {
     return _accelerationValues;
+}
+
+MobilityData::~MobilityData() {
+    delete _mobilityData;
 }

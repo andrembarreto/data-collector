@@ -6,12 +6,14 @@
 #include <QAccelerometerReading>
 #include <QtPositioning>
 #include <QMap>
+#include <QJsonObject>
 
 class MobilityData : public QObject
 {
     Q_OBJECT
 public:
     explicit MobilityData(QObject *parent = nullptr);
+    ~MobilityData();
 
 public slots:
     void registerAccelerometerReading(const QAccelerometerReading &reading);
@@ -30,7 +32,7 @@ signals:
     void noAccessToGeolocation();
 
 private:
-    QVariantMap _mobilityData;
+    QVector<QJsonObject> *_mobilityData;
     QVariantMap _accelerationValues;
     QAccelerometer _accelerometer;
     QGeoPositionInfoSource *_source;
