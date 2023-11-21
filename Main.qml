@@ -153,7 +153,7 @@ Window {
 
     Popup {
         id: collectionFinishedPopup
-        visible: true
+        visible: false
         closePolicy: "NoAutoClose"
 
         anchors.centerIn: parent
