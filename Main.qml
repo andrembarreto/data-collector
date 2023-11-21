@@ -136,7 +136,10 @@ Window {
                 width: parent.width * 0.3
                 height: parent.height * 0.8
 
-                text: "Iniciar jornada"
+                text: mobilityData.currentlyCollecting ? "Terminar Jornada" : "Iniciar jornada"
+                onClicked: {
+                    mobilityData.currentlyCollecting ? mobilityData.stopCollecting() : mobilityData.startCollecting();
+                }
             }
         }
     }
