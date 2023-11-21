@@ -137,8 +137,79 @@ Window {
                 height: parent.height * 0.8
 
                 text: mobilityData.currentlyCollecting ? "Terminar Jornada" : "Iniciar jornada"
+
                 onClicked: {
-                    mobilityData.currentlyCollecting ? mobilityData.stopCollecting() : mobilityData.startCollecting();
+                    if(mobilityData.currentlyCollecting) {
+                        mobilityData.stopCollecting();
+                        collectionFinishedPopup.open();
+                    }
+                    else {
+                        mobilityData.startCollecting();
+                    }
+                }
+            }
+        }
+    }
+
+    Popup {
+        id: collectionFinishedPopup
+        visible: true
+        closePolicy: "NoAutoClose"
+
+        anchors.centerIn: parent
+        width: parent.width * 0.5
+        height: parent.height * 0.3
+
+        background: Rectangle {
+            color: "lightgray"
+            radius: width * 0.05
+            border.color: "gray"
+            border.width: width * 0.01
+        }
+
+        Text {
+            anchors {
+                top: parent.top
+                horizontalCenter: parent.horizontalCenter
+            }
+
+            width: parent.width
+            height: parent.height * 0.2
+
+            text: "Concorda em enviar os dados?"
+            horizontalAlignment: Text.AlignHCenter
+            verticalAlignment: Text.AlignVCenter
+        }
+
+        Row {
+            anchors {
+                top: parent.verticalCenter
+                horizontalCenter: parent.horizontalCenter
+            }
+
+            width: parent.width * 0.5
+            height: parent.height * 0.2
+
+            spacing: width * 0.1
+
+            Button {
+                width: parent.width * 0.45
+                height: parent.height
+
+                text: "Sim"
+                onClicked: {
+                    mobilityData.sendRegisteredData();
+                    collectionFinishedPopup.close();
+                }
+            }
+            Button {
+                width: parent.width * 0.45
+                height: parent.height
+
+                text: "Não"
+                onClicked: {
+                    mobilityData.discardRegisteredData();
+                    collectionFinishedPopup.close();
                 }
             }
         }
