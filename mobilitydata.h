@@ -20,7 +20,7 @@ public:
     ~MobilityData();
 
 public slots:
-    void registerAccelerometerReading(const QAccelerometerReading &reading);
+    void registerAccelerometerReading();
     void registerGeolocation(const QGeoPositionInfo &geolocation);
     void handleGeolocationError(const QGeoPositionInfoSource::Error error);
     bool sendRegisteredData();
@@ -42,7 +42,7 @@ private:
     QVector<QJsonObject> *_mobilityData;
     QVariantMap m_accelerationValues;
     QVariantMap m_currentCoordinates;
-    QAccelerometer _accelerometer;
+    QAccelerometer *_accelerometer;
     QGeoPositionInfoSource *_source;
 
     bool m_accessToPosition;

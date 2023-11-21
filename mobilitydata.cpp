@@ -8,11 +8,9 @@ MobilityData::MobilityData(QObject *parent)
     initializeCoordinateValues();
     m_currentlyCollecting = false;
 
-    _accelerometer.setAccelerationMode(QAccelerometer::User);
+    _accelerometer = new QAccelerometer(this);
 
-    connect(&_accelerometer, &QAccelerometer::readingChanged, this, [this](){
-        registerAccelerometerReading(_accelerometer.reading());
-    });
+    connect(_accelerometer, SIGNAL(readingChanged()), this, SLOT(registerAccelerometerReading()));
 
     m_accessToPosition = false;
     _source = QGeoPositionInfoSource::createDefaultSource(this);
@@ -27,10 +25,11 @@ MobilityData::MobilityData(QObject *parent)
     }
 }
 
-void MobilityData::registerAccelerometerReading(const QAccelerometerReading &reading) {
-    m_accelerationValues.insert("x", reading.x());
-    m_accelerationValues.insert("y", reading.y());
-    m_accelerationValues.insert("z", reading.z());
+void MobilityData::registerAccelerometerReading() {
+    QAccelerometerReading *reading = _accelerometer->reading();
+    m_accelerationValues.insert("x", reading->x());
+    m_accelerationValues.insert("y", reading->y());
+    m_accelerationValues.insert("z", reading->z());
     emit accelerationValuesChanged(m_accelerationValues);
 }
 
@@ -56,7 +55,7 @@ void MobilityData::handleGeolocationError(const QGeoPositionInfoSource::Error er
 }
 
 void MobilityData::startCollecting() {
-    _accelerometer.start();
+    _accelerometer->start();
     _source->startUpdates();
 
     m_currentlyCollecting = true;
@@ -64,7 +63,7 @@ void MobilityData::startCollecting() {
 }
 
 void MobilityData::stopCollecting() {
-    _accelerometer.stop();
+    _accelerometer->stop();
     _source->stopUpdates();
 
     m_currentlyCollecting = false;
@@ -99,4 +98,5 @@ void MobilityData::initializeCoordinateValues() {
 
 MobilityData::~MobilityData() {
     delete _mobilityData;
+    delete _accelerometer;
 }
