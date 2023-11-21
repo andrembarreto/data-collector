@@ -88,7 +88,10 @@ Window {
 
                     Text {
                         anchors.fill: parent
-                        text: "Aceleração " + parent.modelData + ":"
+                        text: "Aceleração " + parent.modelData + ": " + (mobilityData.currentlyCollecting ?
+                                                                         mobilityData.accelerationValues[modelData] :
+                                                                         "--")
+
                         horizontalAlignment: Text.AlignHCenter
                         verticalAlignment: Text.AlignVCenter
                     }
@@ -108,7 +111,10 @@ Window {
 
                     Text {
                         anchors.fill: parent
-                        text: modelData + ":"
+                        text: modelData + ": " + (mobilityData.currentlyCollecting ?
+                                                  mobilityData.currentCoordinates[modelData] :
+                                                  "--")
+
                         horizontalAlignment: Text.AlignHCenter
                         verticalAlignment: Text.AlignVCenter
                     }

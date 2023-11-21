@@ -6,6 +6,7 @@ MobilityData::MobilityData(QObject *parent)
     _mobilityData = new QVector<QJsonObject>;
     initializeAccelerationValues();
     initializeCoordinateValues();
+    m_currentlyCollecting = false;
 
     _accelerometer.setAccelerationMode(QAccelerometer::User);
 
