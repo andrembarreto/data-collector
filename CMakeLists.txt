@@ -4,7 +4,7 @@ project(data-collector VERSION 0.1 LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-find_package(Qt6 6.4 REQUIRED COMPONENTS Quick Sensors Positioning)
+find_package(Qt6 6.4 REQUIRED COMPONENTS Quick Sensors Positioning Network)
 
 qt_standard_project_setup()
 
@@ -34,6 +34,7 @@ target_link_libraries(appdata-collector
     PRIVATE Qt6::Quick
     PRIVATE Qt6::Sensors
     PRIVATE Qt6::Positioning
+    PRIVATE Qt6::Network
 )
 
 include(GNUInstallDirs)

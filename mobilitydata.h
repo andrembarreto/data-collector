@@ -9,6 +9,9 @@
 #include <QJsonObject>
 #include <QJsonArray>
 #include <QJsonDocument>
+#include <QNetworkAccessManager>
+#include <QNetworkRequest>
+#include <QNetworkReply>
 
 class MobilityData : public QObject
 {
@@ -46,6 +49,7 @@ private:
     QVariantMap m_currentCoordinates;
     QAccelerometer *_accelerometer;
     QGeoPositionInfoSource *_source;
+    QNetworkAccessManager *_networkManager;
 
     bool m_accessToPosition;
     bool m_currentlyCollecting;

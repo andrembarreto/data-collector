@@ -23,6 +23,8 @@ MobilityData::MobilityData(QObject *parent)
         connect(_source, &QGeoPositionInfoSource::errorOccurred, this, &MobilityData::handleGeolocationError);
         _source->setUpdateInterval(1000);
     }
+
+    _networkManager = new QNetworkAccessManager(this);
 }
 
 void MobilityData::registerAccelerometerReading() {
@@ -107,4 +109,5 @@ void MobilityData::initializeCoordinateValues() {
 MobilityData::~MobilityData() {
     delete _mobilityData;
     delete _accelerometer;
+    delete _networkManager;
 }
