@@ -71,6 +71,14 @@ void MobilityData::stopCollecting() {
 }
 
 bool MobilityData::sendRegisteredData() {
+    QJsonArray array;
+    for(const auto& obj: *_mobilityData) {
+        array.append(obj);
+    }
+
+    QJsonDocument document(array);
+    QByteArray jsonData = document.toJson(QJsonDocument::Compact);
+
     return false;
 }
 

@@ -7,6 +7,8 @@
 #include <QtPositioning>
 #include <QMap>
 #include <QJsonObject>
+#include <QJsonArray>
+#include <QJsonDocument>
 
 class MobilityData : public QObject
 {
