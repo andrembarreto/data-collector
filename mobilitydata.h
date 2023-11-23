@@ -24,6 +24,8 @@ public:
     explicit MobilityData(QObject *parent = nullptr);
     ~MobilityData();
 
+    QByteArray mobilityDataToJson();
+
 public slots:
     void registerAccelerometerReading();
     void registerGeolocation(const QGeoPositionInfo &geolocation);

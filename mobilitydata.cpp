@@ -72,7 +72,8 @@ void MobilityData::stopCollecting() {
     emit collectionStatusChanged(m_currentlyCollecting);
 }
 
-bool MobilityData::sendRegisteredData() {
+QByteArray MobilityData::mobilityDataToJson()
+{
     QJsonArray array;
     for(const auto& obj: *_mobilityData) {
         array.append(obj);
@@ -81,6 +82,35 @@ bool MobilityData::sendRegisteredData() {
     QJsonDocument document(array);
     QByteArray jsonData = document.toJson(QJsonDocument::Compact);
 
+    return jsonData;
+}
+
+bool MobilityData::sendRegisteredData() {
+    QByteArray jsonData = mobilityDataToJson();
+    qDebug() << jsonData;
+
+//    QNetworkRequest request;
+//    request.setUrl(QUrl("http://localhost:8080/msi-backend"));
+//    request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
+//    request.setHeader(QNetworkRequest::ContentLengthHeader, jsonData.size());
+
+//    QNetworkReply *reply = _networkManager->post(request, jsonData);
+
+//    bool confirmationReceived = false;
+
+//    connect(reply, &QNetworkReply::readyRead, [&] {
+//        if (reply->readAll().contains("confirmation")) {
+//            confirmationReceived = true;
+//        }
+//    });
+
+//    connect(reply, &QNetworkReply::finished, [&] {
+//        if (confirmationReceived) {
+//            return true;
+//        } else {
+//            return false;
+//        }
+//    });
     return false;
 }
 
@@ -97,7 +127,7 @@ QVariantMap MobilityData::getCurrentCoordinates() {
 }
 
 void MobilityData::initializeAccelerationValues() {
-    m_accelerationValues = {{"x", ""}, {"y", ""}, {"z", ""}};
+    m_accelerationValues = {{"x", "0.0"}, {"y", "0.0"}, {"z", "0.0"}};
     emit accelerationValuesChanged(m_accelerationValues);
 }
 
