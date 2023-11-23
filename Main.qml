@@ -56,7 +56,9 @@ Window {
             height: parent.height * 0.075
 
             text: "Coletor de Dados"
-            font.pointSize: 12
+            font.pointSize: 26
+            fontSizeMode: Text.Fit
+            font.weight: Font.Bold
             horizontalAlignment: Text.AlignHCenter
             verticalAlignment: Text.AlignVCenter
         }
@@ -71,7 +73,7 @@ Window {
             }
 
             width: parent.width
-            height: parent.height * 0.75
+            height: parent.height * 0.7
 
             spacing: height * 0.05
 
@@ -81,7 +83,7 @@ Window {
                     required property string modelData
 
                     anchors.horizontalCenter: parent.horizontalCenter
-                    width: parent.width * 0.3
+                    width: parent.width * 0.45
                     height: parent.height * 0.16
                     radius: height * 0.05
                     color: "white"
@@ -89,9 +91,10 @@ Window {
                     Text {
                         anchors.fill: parent
                         text: "Aceleração " + parent.modelData + ": " + (mobilityData.currentlyCollecting ?
-                                                                         mobilityData.accelerationValues[modelData] :
+                                                                         mobilityData.accelerationValues[modelData].toFixed(4) :
                                                                          "--")
-
+                        font.pointSize: 18
+                        fontSizeMode: Text.Fit
                         horizontalAlignment: Text.AlignHCenter
                         verticalAlignment: Text.AlignVCenter
                     }
@@ -104,7 +107,7 @@ Window {
                     required property string modelData
 
                     anchors.horizontalCenter: parent.horizontalCenter
-                    width: parent.width * 0.3
+                    width: parent.width * 0.45
                     height: parent.height * 0.16
                     radius: height * 0.05
                     color: "white"
@@ -114,7 +117,8 @@ Window {
                         text: modelData + ": " + (mobilityData.currentlyCollecting ?
                                                   mobilityData.currentCoordinates[modelData] :
                                                   "--")
-
+                        font.pointSize: 18
+                        fontSizeMode: Text.Fit
                         horizontalAlignment: Text.AlignHCenter
                         verticalAlignment: Text.AlignVCenter
                     }
@@ -129,14 +133,23 @@ Window {
             }
 
             width: parent.width
-            height: parent.height * 0.1
+            height: parent.height * 0.15
+
+            color: "transparent"
 
             Button {
                 anchors.centerIn: parent
-                width: parent.width * 0.3
+                width: parent.width * 0.4
                 height: parent.height * 0.8
 
-                text: mobilityData.currentlyCollecting ? "Terminar Jornada" : "Iniciar jornada"
+                Text {
+                    anchors.fill: parent
+                    text: mobilityData.currentlyCollecting ? "Terminar Jornada" : "Iniciar jornada"
+                    font.pointSize: 16
+                    fontSizeMode: Text.Fit
+                    verticalAlignment: Text.AlignVCenter
+                    horizontalAlignment: Text.AlignHCenter
+                }
 
                 onClicked: {
                     if(mobilityData.currentlyCollecting) {
@@ -157,8 +170,8 @@ Window {
         closePolicy: "NoAutoClose"
 
         anchors.centerIn: parent
-        width: parent.width * 0.5
-        height: parent.height * 0.3
+        width: parent.width * 0.75
+        height: parent.height * 0.25
 
         background: Rectangle {
             color: "lightgray"
@@ -166,33 +179,48 @@ Window {
             border.color: "gray"
             border.width: width * 0.01
         }
-
-        Text {
+        Rectangle {
             anchors {
                 top: parent.top
                 horizontalCenter: parent.horizontalCenter
             }
 
             width: parent.width
-            height: parent.height * 0.2
+            height: parent.height * 0.5
 
-            text: "Concorda em enviar os dados?"
-            horizontalAlignment: Text.AlignHCenter
-            verticalAlignment: Text.AlignVCenter
+            color: "transparent"
+
+            Text {
+                anchors.centerIn: parent
+
+                width: parent.width
+                height: parent.height * 0.4
+
+                text: "Concorda em enviar os dados?"
+                font.pointSize: 20
+                horizontalAlignment: Text.AlignHCenter
+                verticalAlignment: Text.AlignVCenter
+                fontSizeMode: Text.Fit
+            }
         }
 
-        Row {
+        Rectangle {
             anchors {
                 top: parent.verticalCenter
                 horizontalCenter: parent.horizontalCenter
             }
 
-            width: parent.width * 0.5
+            width: parent.width
             height: parent.height * 0.2
 
-            spacing: width * 0.1
+            color: "transparent"
 
             Button {
+                anchors {
+                    right: parent.horizontalCenter
+                    rightMargin: parent.width * 0.025
+                }
+
                 width: parent.width * 0.45
                 height: parent.height
 
@@ -203,6 +231,11 @@ Window {
                 }
             }
             Button {
+                anchors {
+                    left: parent.horizontalCenter
+                    leftMargin: parent.width * 0.025
+                }
+
                 width: parent.width * 0.45
                 height: parent.height
 
