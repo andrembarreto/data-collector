@@ -66,8 +66,8 @@ Window {
             verticalAlignment: Text.AlignVCenter
         }
 
-        Column {
-            id: dataColumn
+        Grid {
+            id: axisReadingsGrid
 
             anchors {
                 top: title.bottom
@@ -76,47 +76,67 @@ Window {
             }
 
             width: parent.width
-            height: parent.height * 0.7
+            height: parent.height * 0.5
 
-            spacing: height * 0.02
+            columns: 2
+            columnSpacing: width * 0.05
 
-            Repeater {
-                model: ["x", "y", "z"]
-                delegate: DataField {
-                    required property string modelData
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    width: parent.width * 0.45
-                    height: parent.height * 0.15
+            Column {
+                width: parent.width * 0.475
+                height: parent.height
+                spacing: height * 0.05
 
-                    displayData: "Aceleração " + modelData + ": " + (mobilityData.currentlyCollecting ?
-                                                                            mobilityData.accelerationValues[modelData].toFixed(4) :
-                                                                            "--")
+                Repeater {
+                    model: ["x", "y", "z"]
+                    delegate: DataField {
+                        required property string modelData
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        width: parent.width * 0.8
+                        height: parent.height * 0.3
+
+                        displayData: "Aceleração " + modelData + ": " + (mobilityData.currentlyCollecting ?
+                                                                                mobilityData.accelerationValues[modelData].toFixed(4) :
+                                                                                "--")
+                    }
                 }
             }
 
-            Repeater {
-                model: ["Latitude", "Longitude"]
-                delegate: DataField {
-                    required property string modelData
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    width: parent.width * 0.45
-                    height: parent.height * 0.15
+            Column {
+                width: parent.width * 0.475
+                height: parent.height
+                spacing: height * 0.05
 
-                    displayData: modelData + ": " + (mobilityData.currentlyCollecting ?
-                                                     mobilityData.currentCoordinates[modelData.toLowerCase()] :
-                                                     "--")
+                Repeater {
+                    model: ["x", "y", "z"]
+                    delegate: DataField {
+                        required property string modelData
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        width: parent.width * 0.8
+                        height: parent.height * 0.3
+
+                        displayData: "Rotação " + modelData + ": " + (mobilityData.currentlyCollecting ?
+                                                                                mobilityData.rotationValues[modelData].toFixed(4) :
+                                                                                "--")
+                    }
                 }
             }
+        }
 
-            DataField {
-                anchors.horizontalCenter: parent.horizontalCenter
-                width: parent.width * 0.45
-                height: parent.height * 0.15
-
-                displayData: "Orientação" + ": " + (mobilityData.currentlyCollecting ?
-                                                    mobilityData.currentOrientation :
-                                                    "--")
+        DataField {
+            anchors {
+                top: axisReadingsGrid.bottom
+                horizontalCenter: parent.horizontalCenter
+                bottomMargin: parent.height * 0.05
+                topMargin: parent.height * 0.05
             }
+
+            width: parent.width * 0.8
+            height: parent.height * 0.1
+
+            property real latitude: mobilityData.currentCoordinates['latitude']
+            property real longitude: mobilityData.currentCoordinates['longitude']
+
+            displayData: "Coordenada: " + (mobilityData.currentlyCollecting ? latitude + "," + longitude : "--")
         }
 
         Rectangle {

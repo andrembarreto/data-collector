@@ -2,7 +2,6 @@ import QtQuick 2.15
 
 Rectangle {
     property alias displayData: dataText.text
-    anchors.horizontalCenter: parent.horizontalCenter
     radius: height * 0.05
     color: "white"
     border.color: "#3F0071"
