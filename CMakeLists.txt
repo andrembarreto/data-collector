@@ -17,6 +17,7 @@ qt_add_qml_module(appdata-collector
     VERSION 1.0
     QML_FILES Main.qml
     SOURCES mobilitydata.h mobilitydata.cpp
+    QML_FILES components/DataField.qml
 )
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.
