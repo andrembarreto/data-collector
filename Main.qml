@@ -42,7 +42,7 @@ Window {
     Rectangle {
         id: root
         anchors.fill: parent
-        color: "lightblue"
+        color: "#000000"
 
         Text {
             id: title
@@ -56,6 +56,7 @@ Window {
             height: parent.height * 0.075
 
             text: "Coletor de Dados"
+            color: "silver"
             font.pointSize: 26
             fontSizeMode: Text.Fit
             font.weight: Font.Bold
@@ -87,6 +88,8 @@ Window {
                     height: parent.height * 0.16
                     radius: height * 0.05
                     color: "white"
+                    border.color: "#3F0071"
+                    border.width: width * 0.02
 
                     Text {
                         anchors.fill: parent
@@ -111,6 +114,8 @@ Window {
                     height: parent.height * 0.16
                     radius: height * 0.05
                     color: "white"
+                    border.color: "#3F0071"
+                    border.width: width * 0.02
 
                     Text {
                         anchors.fill: parent
@@ -135,16 +140,22 @@ Window {
             width: parent.width
             height: parent.height * 0.15
 
-            color: "transparent"
+            color: root.color
 
             Button {
                 anchors.centerIn: parent
                 width: parent.width * 0.4
                 height: parent.height * 0.8
 
+                background: Rectangle {
+                    color: "#3F0071"
+                    radius: width * 0.02
+                }
+
                 Text {
                     anchors.fill: parent
                     text: mobilityData.currentlyCollecting ? "Terminar Jornada" : "Iniciar jornada"
+                    color: "silver"
                     font.pointSize: 16
                     fontSizeMode: Text.Fit
                     verticalAlignment: Text.AlignVCenter
@@ -174,9 +185,9 @@ Window {
         height: parent.height * 0.25
 
         background: Rectangle {
-            color: "lightgray"
+            color: "#09070d"
             radius: width * 0.05
-            border.color: "gray"
+            border.color: "#150050"
             border.width: width * 0.01
         }
         Rectangle {
@@ -197,6 +208,7 @@ Window {
                 height: parent.height * 0.4
 
                 text: "Concorda em enviar os dados?"
+                color: "silver"
                 font.pointSize: 20
                 horizontalAlignment: Text.AlignHCenter
                 verticalAlignment: Text.AlignVCenter
@@ -224,7 +236,21 @@ Window {
                 width: parent.width * 0.45
                 height: parent.height
 
-                text: "Sim"
+                background: Rectangle {
+                    color: "#150050"
+                    radius: width * 0.02
+                }
+
+                Text {
+                    anchors.fill: parent
+                    text: "Sim"
+                    color: "silver"
+                    font.pointSize: 14
+                    fontSizeMode: Text.Fit
+                    verticalAlignment: Text.AlignVCenter
+                    horizontalAlignment: Text.AlignHCenter
+                }
+
                 onClicked: {
                     mobilityData.sendRegisteredData();
                     collectionFinishedPopup.close();
@@ -239,7 +265,21 @@ Window {
                 width: parent.width * 0.45
                 height: parent.height
 
-                text: "Não"
+                background: Rectangle {
+                    color: "#150050"
+                    radius: width * 0.02
+                }
+
+                Text {
+                    anchors.fill: parent
+                    text: "Não"
+                    color: "silver"
+                    font.pointSize: 14
+                    fontSizeMode: Text.Fit
+                    verticalAlignment: Text.AlignVCenter
+                    horizontalAlignment: Text.AlignHCenter
+                }
+
                 onClicked: {
                     mobilityData.discardRegisteredData();
                     collectionFinishedPopup.close();
