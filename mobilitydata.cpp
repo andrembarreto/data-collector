@@ -179,7 +179,7 @@ void MobilityData::initializeCoordinateValues() {
     emit currentCoordinatesChanged(m_currentCoordinates);
 }
 
-QString MobilityData::deviceOrientationToString(QOrientationReading::Orientation orientation) {
+QString MobilityData::deviceOrientationToString(const QOrientationReading::Orientation &orientation) {
     switch(orientation) {
     case QOrientationReading::TopUp:
         return "Top Up";

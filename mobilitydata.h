@@ -31,6 +31,7 @@ public:
     ~MobilityData();
 
     QByteArray mobilityDataToJson();
+    static QString deviceOrientationToString(const QOrientationReading::Orientation &orientation);
 
 public slots:
     void registerAccelerometerReading();
@@ -77,7 +78,6 @@ private:
     void initializeCoordinateValues();
     void addMobilityDataEntry(QVariantMap accelerationValues, QVariantMap rotationValues,
                               QOrientationReading::Orientation deviceOrientation, QGeoPositionInfo geoPositionInfo);
-    QString deviceOrientationToString(QOrientationReading::Orientation orientation);
 };
 
 #endif // MOBILITYDATA_H
