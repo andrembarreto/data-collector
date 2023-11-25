@@ -46,15 +46,15 @@ signals:
     void collectionStatusChanged(bool collectionStatus);
 
 private:
-    QVector<QJsonObject> *_mobilityData;
     QVariantMap m_accelerationValues;
     QVariantMap m_currentCoordinates;
+    bool m_accessToPosition;
+    bool m_currentlyCollecting;
+
+    QVector<QJsonObject> *_mobilityData;
     QAccelerometer *_accelerometer;
     QGeoPositionInfoSource *_source;
     QNetworkAccessManager *_networkManager;
-
-    bool m_accessToPosition;
-    bool m_currentlyCollecting;
 
     void initializeAccelerationValues();
     void initializeCoordinateValues();
