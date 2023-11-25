@@ -9,8 +9,14 @@ MobilityData::MobilityData(QObject *parent)
     m_currentlyCollecting = false;
 
     _accelerometer = new QAccelerometer(this);
-
     connect(_accelerometer, SIGNAL(readingChanged()), this, SLOT(registerAccelerometerReading()));
+
+    _rotationSensor = new QRotationSensor(this);
+    connect(_rotationSensor, SIGNAL(readingChanged()), this, SLOT(registerRotationReading()));
+
+    _orientationSensor = new QOrientationSensor(this);
+    connect(_orientationSensor, SIGNAL(readingChanged()), this, SLOT(registerDeviceOrientation()));
+    m_currentOrientation = QOrientationReading::Undefined;
 
     m_accessToPosition = false;
     _source = QGeoPositionInfoSource::createDefaultSource(this);
@@ -36,6 +42,20 @@ void MobilityData::registerAccelerometerReading() {
     emit accelerationValuesChanged(m_accelerationValues);
 }
 
+void MobilityData::registerRotationReading() {
+    QRotationReading *reading = _rotationSensor->reading();
+    m_rotationValues.insert("x", reading->x());
+    m_rotationValues.insert("y", reading->y());
+    m_rotationValues.insert("z", reading->z());
+    emit rotationValuesChanged(m_rotationValues);
+}
+
+void MobilityData::registerDeviceOrientation() {
+    QOrientationReading *reading = _orientationSensor->reading();
+    m_currentOrientation = reading->orientation();
+    emit currentOrientationChanged(deviceOrientationToString(m_currentOrientation));
+}
+
 void MobilityData::registerGeolocation(const QGeoPositionInfo &geolocation) {
     m_currentCoordinates.insert("latitude", geolocation.coordinate().latitude());
     m_currentCoordinates.insert("longitude", geolocation.coordinate().longitude());
@@ -47,7 +67,11 @@ void MobilityData::registerGeolocation(const QGeoPositionInfo &geolocation) {
         {"longitude", geolocation.coordinate().longitude()},
         {"acceleration_x", m_accelerationValues.value("x").toJsonValue()},
         {"acceleration_y", m_accelerationValues.value("y").toJsonValue()},
-        {"acceleration_z", m_accelerationValues.value("z").toJsonValue()}
+        {"acceleration_z", m_accelerationValues.value("z").toJsonValue()},
+        {"rotation_x", m_rotationValues.value("x").toJsonValue()},
+        {"rotation_y", m_rotationValues.value("y").toJsonValue()},
+        {"rotation_z", m_rotationValues.value("z").toJsonValue()},
+        {"device_orientation", m_currentOrientation}
     };
 
     _mobilityData->append(data);
@@ -59,6 +83,8 @@ void MobilityData::handleGeolocationError(const QGeoPositionInfoSource::Error er
 
 void MobilityData::startCollecting() {
     _accelerometer->start();
+    _rotationSensor->start();
+    _orientationSensor->start();
     _source->startUpdates();
 
     m_currentlyCollecting = true;
@@ -67,6 +93,8 @@ void MobilityData::startCollecting() {
 
 void MobilityData::stopCollecting() {
     _accelerometer->stop();
+    _rotationSensor->stop();
+    _orientationSensor->stop();
     _source->stopUpdates();
 
     m_currentlyCollecting = false;
@@ -112,6 +140,14 @@ QVariantMap MobilityData::getAccelerationValues() {
     return m_accelerationValues;
 }
 
+QVariantMap MobilityData::getRotationValues() {
+    return m_rotationValues;
+}
+
+QString MobilityData::getCurrentOrientation() {
+    return deviceOrientationToString(m_currentOrientation);
+}
+
 QVariantMap MobilityData::getCurrentCoordinates() {
     return m_currentCoordinates;
 }
@@ -121,13 +157,39 @@ void MobilityData::initializeAccelerationValues() {
     emit accelerationValuesChanged(m_accelerationValues);
 }
 
+void MobilityData::initializeRotationValues() {
+    m_rotationValues = {{"x", "0.0"}, {"y", "0.0"}, {"z", "0.0"}};
+    emit rotationValuesChanged(m_rotationValues);
+}
+
 void MobilityData::initializeCoordinateValues() {
     m_currentCoordinates = {{"latitude", ""}, {"longitude", ""}};
     emit currentCoordinatesChanged(m_currentCoordinates);
 }
 
+QString MobilityData::deviceOrientationToString(QOrientationReading::Orientation orientation) {
+    switch(orientation) {
+    case QOrientationReading::TopUp:
+        return "Top Up";
+    case QOrientationReading::TopDown:
+        return "Top Down";
+    case QOrientationReading::LeftUp:
+        return "Left Up";
+    case QOrientationReading::RightUp:
+        return "Right Up";
+    case QOrientationReading::FaceUp:
+        return "Face Up";
+    case QOrientationReading::FaceDown:
+        return "Face Down";
+    default:
+        return "Undefined";
+    }
+}
+
 MobilityData::~MobilityData() {
     delete _mobilityData;
     delete _accelerometer;
+    delete _rotationSensor;
+    delete _orientationSensor;
     delete _networkManager;
 }
