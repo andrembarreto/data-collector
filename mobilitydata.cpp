@@ -56,22 +56,34 @@ void MobilityData::registerDeviceOrientation() {
     emit currentOrientationChanged(deviceOrientationToString(m_currentOrientation));
 }
 
-void MobilityData::registerGeolocation(const QGeoPositionInfo &geolocation) {
-    m_currentCoordinates.insert("latitude", geolocation.coordinate().latitude());
-    m_currentCoordinates.insert("longitude", geolocation.coordinate().longitude());
+void MobilityData::registerGeolocation(const QGeoPositionInfo &geoPositionInfo) {
+    double latitude = geoPositionInfo.coordinate().latitude();
+    double longitude = geoPositionInfo.coordinate().longitude();
+
+    if(latitude == m_currentCoordinates.value("latitude") &&
+       longitude == m_currentCoordinates.value("longitude"))
+       return;
+
+    m_currentCoordinates.insert("latitude", latitude);
+    m_currentCoordinates.insert("longitude", longitude);
     emit currentCoordinatesChanged(m_currentCoordinates);
 
+    addMobilityDataEntry(m_accelerationValues, m_rotationValues, m_currentOrientation, geoPositionInfo);
+}
+
+void MobilityData::addMobilityDataEntry(QVariantMap accelerationValues, QVariantMap rotationValues,
+                                        QOrientationReading::Orientation deviceOrientation, QGeoPositionInfo geoPositionInfo) {
     QJsonObject data {
-        {"timestamp", geolocation.timestamp().toString()},
-        {"latitude", geolocation.coordinate().latitude()},
-        {"longitude", geolocation.coordinate().longitude()},
-        {"acceleration_x", m_accelerationValues.value("x").toJsonValue()},
-        {"acceleration_y", m_accelerationValues.value("y").toJsonValue()},
-        {"acceleration_z", m_accelerationValues.value("z").toJsonValue()},
-        {"rotation_x", m_rotationValues.value("x").toJsonValue()},
-        {"rotation_y", m_rotationValues.value("y").toJsonValue()},
-        {"rotation_z", m_rotationValues.value("z").toJsonValue()},
-        {"device_orientation", m_currentOrientation}
+        {"timestamp", geoPositionInfo.timestamp().toString()},
+        {"latitude", geoPositionInfo.coordinate().latitude()},
+        {"longitude", geoPositionInfo.coordinate().longitude()},
+        {"acceleration_x", accelerationValues.value("x").toJsonValue()},
+        {"acceleration_y", accelerationValues.value("y").toJsonValue()},
+        {"acceleration_z", accelerationValues.value("z").toJsonValue()},
+        {"rotation_x", rotationValues.value("x").toJsonValue()},
+        {"rotation_y", rotationValues.value("y").toJsonValue()},
+        {"rotation_z", rotationValues.value("z").toJsonValue()},
+        {"device_orientation", deviceOrientation}
     };
 
     _mobilityData->append(data);

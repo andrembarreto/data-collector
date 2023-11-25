@@ -72,10 +72,11 @@ private:
     QGeoPositionInfoSource *_source;
     QNetworkAccessManager *_networkManager;
 
-    void initializeCollectionValues();
     void initializeAccelerationValues();
     void initializeRotationValues();
     void initializeCoordinateValues();
+    void addMobilityDataEntry(QVariantMap accelerationValues, QVariantMap rotationValues,
+                              QOrientationReading::Orientation deviceOrientation, QGeoPositionInfo geoPositionInfo);
     QString deviceOrientationToString(QOrientationReading::Orientation orientation);
 };
 
