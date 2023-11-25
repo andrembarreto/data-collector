@@ -25,6 +25,7 @@ MobilityData::MobilityData(QObject *parent)
     }
 
     _networkManager = new QNetworkAccessManager(this);
+
 }
 
 void MobilityData::registerAccelerometerReading() {
@@ -87,30 +88,19 @@ QByteArray MobilityData::mobilityDataToJson()
 
 bool MobilityData::sendRegisteredData() {
     QByteArray jsonData = mobilityDataToJson();
-    qDebug() << jsonData;
 
-//    QNetworkRequest request;
-//    request.setUrl(QUrl("http://localhost:8080/msi-backend"));
-//    request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
-//    request.setHeader(QNetworkRequest::ContentLengthHeader, jsonData.size());
+    QNetworkRequest request;
+    request.setUrl(QUrl("http://localhost:5000/receive-mobility-data"));
+    request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
+    request.setHeader(QNetworkRequest::ContentLengthHeader, jsonData.size());
 
-//    QNetworkReply *reply = _networkManager->post(request, jsonData);
-
-//    bool confirmationReceived = false;
-
-//    connect(reply, &QNetworkReply::readyRead, [&] {
-//        if (reply->readAll().contains("confirmation")) {
-//            confirmationReceived = true;
-//        }
-//    });
-
-//    connect(reply, &QNetworkReply::finished, [&] {
-//        if (confirmationReceived) {
-//            return true;
-//        } else {
-//            return false;
-//        }
-//    });
+    QNetworkReply *reply = _networkManager->post(request, jsonData);
+    if(!reply->waitForReadyRead(10000)) {
+        return false;
+    }
+    else {
+        if(reply->readAll().contains("success")) return true;
+    }
     return false;
 }
 
