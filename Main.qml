@@ -3,6 +3,8 @@ import QtQuick.Window
 import QtQuick.VirtualKeyboard
 import QtQuick.Controls
 
+import "components"
+
 Window {
     id: window
     width: 1080
@@ -76,58 +78,44 @@ Window {
             width: parent.width
             height: parent.height * 0.7
 
-            spacing: height * 0.05
+            spacing: height * 0.02
 
             Repeater {
                 model: ["x", "y", "z"]
-                delegate: Rectangle {
+                delegate: DataField {
                     required property string modelData
-
                     anchors.horizontalCenter: parent.horizontalCenter
                     width: parent.width * 0.45
-                    height: parent.height * 0.16
-                    radius: height * 0.05
-                    color: "white"
-                    border.color: "#3F0071"
-                    border.width: width * 0.02
+                    height: parent.height * 0.15
 
-                    Text {
-                        anchors.fill: parent
-                        text: "Aceleração " + parent.modelData + ": " + (mobilityData.currentlyCollecting ?
-                                                                         mobilityData.accelerationValues[modelData].toFixed(4) :
-                                                                         "--")
-                        font.pointSize: 18
-                        fontSizeMode: Text.Fit
-                        horizontalAlignment: Text.AlignHCenter
-                        verticalAlignment: Text.AlignVCenter
-                    }
+                    displayData: "Aceleração " + modelData + ": " + (mobilityData.currentlyCollecting ?
+                                                                            mobilityData.accelerationValues[modelData].toFixed(4) :
+                                                                            "--")
                 }
             }
 
             Repeater {
-                model: ["latitude", "longitude"]
-                delegate: Rectangle {
+                model: ["Latitude", "Longitude"]
+                delegate: DataField {
                     required property string modelData
-
                     anchors.horizontalCenter: parent.horizontalCenter
                     width: parent.width * 0.45
-                    height: parent.height * 0.16
-                    radius: height * 0.05
-                    color: "white"
-                    border.color: "#3F0071"
-                    border.width: width * 0.02
+                    height: parent.height * 0.15
 
-                    Text {
-                        anchors.fill: parent
-                        text: modelData + ": " + (mobilityData.currentlyCollecting ?
-                                                  mobilityData.currentCoordinates[modelData] :
-                                                  "--")
-                        font.pointSize: 18
-                        fontSizeMode: Text.Fit
-                        horizontalAlignment: Text.AlignHCenter
-                        verticalAlignment: Text.AlignVCenter
-                    }
+                    displayData: modelData + ": " + (mobilityData.currentlyCollecting ?
+                                                     mobilityData.currentCoordinates[modelData.toLowerCase()] :
+                                                     "--")
                 }
+            }
+
+            DataField {
+                anchors.horizontalCenter: parent.horizontalCenter
+                width: parent.width * 0.45
+                height: parent.height * 0.15
+
+                displayData: "Orientação" + ": " + (mobilityData.currentlyCollecting ?
+                                                    mobilityData.currentOrientation :
+                                                    "--")
             }
         }
 
