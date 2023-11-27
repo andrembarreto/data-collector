@@ -113,8 +113,7 @@ void MobilityData::stopCollecting() {
     emit collectionStatusChanged(m_currentlyCollecting);
 }
 
-QByteArray MobilityData::mobilityDataToJson()
-{
+QByteArray MobilityData::mobilityDataToJson() {
     QJsonArray array;
     for(const auto& obj: *_mobilityData) {
         array.append(obj);
@@ -135,9 +134,8 @@ bool MobilityData::sendRegisteredData() {
     request.setHeader(QNetworkRequest::ContentLengthHeader, jsonData.size());
 
     QNetworkReply *reply = _networkManager->post(request, jsonData);
-    if(!reply->waitForReadyRead(10000)) {
+    if(!reply->waitForReadyRead(10000))
         return false;
-    }
     else {
         if(reply->readAll().contains("success")) return true;
     }
