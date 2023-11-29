@@ -4,6 +4,7 @@ MobilityData::MobilityData(QObject *parent)
     : QObject{parent} {
 
     _mobilityData = new QVector<QJsonObject>;
+    _busLine = "";
     initializeAccelerationValues();
     initializeCoordinateValues();
     m_currentlyCollecting = false;
@@ -22,9 +23,6 @@ MobilityData::MobilityData(QObject *parent)
     _source = QGeoPositionInfoSource::createDefaultSource(this);
 
     if(_source) {
-        m_accessToPosition = true;
-        emit accessToPositionChanged(m_accessToPosition);
-
         connect(_source, &QGeoPositionInfoSource::positionUpdated, this, &MobilityData::registerGeolocation);
         connect(_source, &QGeoPositionInfoSource::errorOccurred, this, &MobilityData::handleGeolocationError);
         _source->setUpdateInterval(1000);
@@ -115,6 +113,8 @@ void MobilityData::stopCollecting() {
 
 QByteArray MobilityData::mobilityDataToJson() {
     QJsonArray array;
+    array.append({{"bus_line", _busLine}});
+
     for(const auto& obj: *_mobilityData) {
         array.append(obj);
     }
@@ -175,6 +175,10 @@ void MobilityData::initializeRotationValues() {
 void MobilityData::initializeCoordinateValues() {
     m_currentCoordinates = {{"latitude", ""}, {"longitude", ""}};
     emit currentCoordinatesChanged(m_currentCoordinates);
+}
+
+void MobilityData::setBusLine(QString busLineId) {
+    _busLine = busLineId;
 }
 
 QString MobilityData::deviceOrientationToString(const QOrientationReading::Orientation &orientation) {

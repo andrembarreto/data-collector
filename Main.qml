@@ -176,9 +176,104 @@ Window {
                         collectionFinishedPopup.open();
                     }
                     else {
-                        mobilityData.startCollecting();
+                        setBusLinePopup.open();
                     }
                 }
+            }
+        }
+    }
+
+    Popup {
+        id: setBusLinePopup
+        visible: false
+        closePolicy: "NoAutoClose"
+        onAboutToHide: {
+            mobilityData.setBusLine(busLineInput.text);
+        }
+
+        anchors.centerIn: parent
+        width: parent.width * 0.75
+        height: parent.height * 0.25
+
+        background: Rectangle {
+            color: "#09070d"
+            radius: width * 0.05
+            border.color: "#150050"
+            border.width: width * 0.01
+        }
+
+        Text {
+            anchors {
+                top: parent.top
+                topMargin: parent.height * 0.1
+                horizontalCenter: parent.horizontalCenter
+            }
+
+            width: parent.width
+            height: parent.height * 0.2
+
+            text: "Qual a linha de ônibus?"
+            color: "silver"
+            font.pointSize: 20
+            horizontalAlignment: Text.AlignHCenter
+            verticalAlignment: Text.AlignVCenter
+            fontSizeMode: Text.Fit
+        }
+
+        TextField {
+            id: busLineInput
+            anchors {
+                top: parent.verticalCenter
+                horizontalCenter: parent.horizontalCenter
+            }
+
+            width: parent.width * 0.4
+            height: parent.height * 0.2
+
+            font.pointSize: 10
+            verticalAlignment: Text.AlignVCenter
+            horizontalAlignment: Text.AlignHCenter
+
+            placeholderText: "Digite aqui..."
+            focus: true
+
+            background: Rectangle {
+                anchors.fill: parent
+                color: "silver"
+                radius: width * 0.02
+            }
+        }
+
+        Button {
+            enabled: busLineInput.text !== ""
+
+            anchors {
+                bottom: parent.bottom
+                bottomMargin: parent.height * 0.05
+                horizontalCenter: parent.horizontalCenter
+            }
+
+            width: parent.width * 0.5
+            height: parent.height * 0.15
+
+            background: Rectangle {
+                color: "#150050"
+                radius: width * 0.02
+            }
+
+            Text {
+                anchors.fill: parent
+                text: "Pronto"
+                color: "silver"
+                font.pointSize: 14
+                fontSizeMode: Text.Fit
+                verticalAlignment: Text.AlignVCenter
+                horizontalAlignment: Text.AlignHCenter
+            }
+
+            onClicked: {
+                mobilityData.startCollecting();
+                setBusLinePopup.close();
             }
         }
     }

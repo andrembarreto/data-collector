@@ -41,6 +41,7 @@ public slots:
     void handleGeolocationError(const QGeoPositionInfoSource::Error error);
     bool sendRegisteredData();
     void discardRegisteredData();
+    void setBusLine(QString busLineId);
 
     void startCollecting();
     void stopCollecting();
@@ -72,6 +73,7 @@ private:
     QOrientationSensor *_orientationSensor;
     QGeoPositionInfoSource *_source;
     QNetworkAccessManager *_networkManager;
+    QString _busLine;
 
     void initializeAccelerationValues();
     void initializeRotationValues();
