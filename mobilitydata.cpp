@@ -17,6 +17,7 @@ MobilityData::MobilityData(QObject *parent)
 
     _orientationSensor = new QOrientationSensor(this);
     connect(_orientationSensor, SIGNAL(readingChanged()), this, SLOT(registerDeviceOrientation()));
+
     m_currentOrientation = QOrientationReading::Undefined;
 
     m_accessToPosition = false;
@@ -111,20 +112,6 @@ void MobilityData::stopCollecting() {
     emit collectionStatusChanged(m_currentlyCollecting);
 }
 
-QByteArray MobilityData::mobilityDataToJson() {
-    QJsonArray array;
-    array.append({{"bus_line", _busLine}});
-
-    for(const auto& obj: *_mobilityData) {
-        array.append(obj);
-    }
-
-    QJsonDocument document(array);
-    QByteArray jsonData = document.toJson(QJsonDocument::Compact);
-
-    return jsonData;
-}
-
 bool MobilityData::sendRegisteredData() {
     QByteArray jsonData = mobilityDataToJson();
 
@@ -179,6 +166,20 @@ void MobilityData::initializeCoordinateValues() {
 
 void MobilityData::setBusLine(QString busLineId) {
     _busLine = busLineId;
+}
+
+QByteArray MobilityData::mobilityDataToJson() {
+    QJsonArray array;
+    array.append(QJsonObject{{"bus_line", _busLine}});
+
+    for(const auto& obj: *_mobilityData) {
+        array.append(obj);
+    }
+
+    QJsonDocument document(array);
+    QByteArray jsonData = document.toJson(QJsonDocument::Compact);
+
+    return jsonData;
 }
 
 QString MobilityData::deviceOrientationToString(const QOrientationReading::Orientation &orientation) {
