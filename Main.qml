@@ -95,8 +95,8 @@ Window {
                         height: parent.height * 0.3
 
                         displayData: "Aceleração " + modelData + ": " + (mobilityData.currentlyCollecting ?
-                                                                                mobilityData.accelerationValues[modelData].toFixed(4) :
-                                                                                "--")
+                                                                         mobilityData.accelerationValues[modelData].toFixed(4) :
+                                                                         "--")
                     }
                 }
             }
@@ -115,8 +115,8 @@ Window {
                         height: parent.height * 0.3
 
                         displayData: "Rotação " + modelData + ": " + (mobilityData.currentlyCollecting ?
-                                                                                mobilityData.rotationValues[modelData].toFixed(4) :
-                                                                                "--")
+                                                                      mobilityData.rotationValues[modelData].toFixed(4) :
+                                                                      "--")
                     }
                 }
             }
@@ -133,8 +133,8 @@ Window {
             width: parent.width * 0.8
             height: parent.height * 0.1
 
-            property real latitude: mobilityData.currentCoordinates['latitude']
-            property real longitude: mobilityData.currentCoordinates['longitude']
+            property double latitude: mobilityData.currentCoordinates['latitude']
+            property double longitude: mobilityData.currentCoordinates['longitude']
 
             displayData: "Coordenada: " + (mobilityData.currentlyCollecting ? latitude + "," + longitude : "--")
         }

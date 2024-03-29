@@ -6,6 +6,7 @@ MobilityData::MobilityData(QObject *parent)
     _mobilityData = new QVector<QJsonObject>;
     _busLine = "";
     initializeAccelerationValues();
+    initializeRotationValues();
     initializeCoordinateValues();
     m_currentlyCollecting = false;
 
@@ -150,12 +151,12 @@ QVariantMap MobilityData::getCurrentCoordinates() {
 }
 
 void MobilityData::initializeAccelerationValues() {
-    m_accelerationValues = {{"x", "0.0"}, {"y", "0.0"}, {"z", "0.0"}};
+    m_accelerationValues = {{"x", 0.0}, {"y", 0.0}, {"z", 0.0}};
     emit accelerationValuesChanged(m_accelerationValues);
 }
 
 void MobilityData::initializeRotationValues() {
-    m_rotationValues = {{"x", "0.0"}, {"y", "0.0"}, {"z", "0.0"}};
+    m_rotationValues = {{"x", 0.0}, {"y", 0.0}, {"z", 0.0}};
     emit rotationValuesChanged(m_rotationValues);
 }
 
