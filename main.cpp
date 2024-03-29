@@ -10,9 +10,9 @@ int main(int argc, char *argv[])
 
     QGuiApplication app(argc, argv);
 
-    QQmlApplicationEngine engine;
-
     MobilityData mobilityData;
+
+    QQmlApplicationEngine engine;
     engine.rootContext()->setContextProperty("mobilityData", &mobilityData);
 
     const QUrl url(u"qrc:/data-collector/Main.qml"_qs);
