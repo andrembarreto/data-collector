@@ -4,7 +4,7 @@ project(data-collector VERSION 0.1 LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-find_package(Qt6 6.4 REQUIRED COMPONENTS Quick Sensors Positioning Network)
+find_package(Qt6 6.5 REQUIRED COMPONENTS Quick Sensors Positioning Network)
 
 qt_standard_project_setup()
 
