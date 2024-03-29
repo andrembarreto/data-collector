@@ -1,5 +1,7 @@
 #include "mobilitydata.h"
 
+#define RECEIVE_SUCCESS 0
+
 MobilityData::MobilityData(QObject *parent)
     : QObject{parent} {
 
@@ -125,7 +127,7 @@ bool MobilityData::sendRegisteredData() {
     if(!reply->waitForReadyRead(10000))
         return false;
     else {
-        if(reply->readAll().contains("success")) return true;
+        if(reply->readAll().contains(RECEIVE_SUCCESS)) return true;
     }
     return false;
 }
