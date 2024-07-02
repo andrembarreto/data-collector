@@ -18,11 +18,6 @@ MobilityData::MobilityData(QObject *parent)
     _rotationSensor = new QRotationSensor(this);
     connect(_rotationSensor, SIGNAL(readingChanged()), this, SLOT(registerRotationReading()));
 
-    _orientationSensor = new QOrientationSensor(this);
-    connect(_orientationSensor, SIGNAL(readingChanged()), this, SLOT(registerDeviceOrientation()));
-
-    m_currentOrientation = QOrientationReading::Undefined;
-
     m_accessToPosition = false;
     _source = QGeoPositionInfoSource::createDefaultSource(this);
 
@@ -52,12 +47,6 @@ void MobilityData::registerRotationReading() {
     emit rotationValuesChanged(m_rotationValues);
 }
 
-void MobilityData::registerDeviceOrientation() {
-    QOrientationReading *reading = _orientationSensor->reading();
-    m_currentOrientation = reading->orientation();
-    emit currentOrientationChanged(deviceOrientationToString(m_currentOrientation));
-}
-
 void MobilityData::registerGeolocation(const QGeoPositionInfo &geoPositionInfo) {
     double latitude = geoPositionInfo.coordinate().latitude();
     double longitude = geoPositionInfo.coordinate().longitude();
@@ -70,11 +59,10 @@ void MobilityData::registerGeolocation(const QGeoPositionInfo &geoPositionInfo) 
     m_currentCoordinates.insert("longitude", longitude);
     emit currentCoordinatesChanged(m_currentCoordinates);
 
-    addMobilityDataEntry(m_accelerationValues, m_rotationValues, m_currentOrientation, geoPositionInfo);
+    addMobilityDataEntry(m_accelerationValues, m_rotationValues, geoPositionInfo);
 }
 
-void MobilityData::addMobilityDataEntry(QVariantMap accelerationValues, QVariantMap rotationValues,
-                                        QOrientationReading::Orientation deviceOrientation, QGeoPositionInfo geoPositionInfo) {
+void MobilityData::addMobilityDataEntry(QVariantMap accelerationValues, QVariantMap rotationValues, QGeoPositionInfo geoPositionInfo) {
     QJsonObject data {
         {"timestamp", geoPositionInfo.timestamp().toString()},
         {"latitude", geoPositionInfo.coordinate().latitude()},
@@ -84,8 +72,7 @@ void MobilityData::addMobilityDataEntry(QVariantMap accelerationValues, QVariant
         {"acceleration_z", accelerationValues.value("z").toJsonValue()},
         {"rotation_x", rotationValues.value("x").toJsonValue()},
         {"rotation_y", rotationValues.value("y").toJsonValue()},
-        {"rotation_z", rotationValues.value("z").toJsonValue()},
-        {"device_orientation", deviceOrientation}
+        {"rotation_z", rotationValues.value("z").toJsonValue()}
     };
 
     _mobilityData->append(data);
@@ -98,7 +85,6 @@ void MobilityData::handleGeolocationError(const QGeoPositionInfoSource::Error er
 void MobilityData::startCollecting() {
     _accelerometer->start();
     _rotationSensor->start();
-    _orientationSensor->start();
     _source->startUpdates();
 
     m_currentlyCollecting = true;
@@ -108,7 +94,6 @@ void MobilityData::startCollecting() {
 void MobilityData::stopCollecting() {
     _accelerometer->stop();
     _rotationSensor->stop();
-    _orientationSensor->stop();
     _source->stopUpdates();
 
     m_currentlyCollecting = false;
@@ -142,10 +127,6 @@ QVariantMap MobilityData::getAccelerationValues() {
 
 QVariantMap MobilityData::getRotationValues() {
     return m_rotationValues;
-}
-
-QString MobilityData::getCurrentOrientation() {
-    return deviceOrientationToString(m_currentOrientation);
 }
 
 QVariantMap MobilityData::getCurrentCoordinates() {
@@ -185,29 +166,9 @@ QByteArray MobilityData::mobilityDataToJson() {
     return jsonData;
 }
 
-QString MobilityData::deviceOrientationToString(const QOrientationReading::Orientation &orientation) {
-    switch(orientation) {
-    case QOrientationReading::TopUp:
-        return "Top Up";
-    case QOrientationReading::TopDown:
-        return "Top Down";
-    case QOrientationReading::LeftUp:
-        return "Left Up";
-    case QOrientationReading::RightUp:
-        return "Right Up";
-    case QOrientationReading::FaceUp:
-        return "Face Up";
-    case QOrientationReading::FaceDown:
-        return "Face Down";
-    default:
-        return "Undefined";
-    }
-}
-
 MobilityData::~MobilityData() {
     delete _mobilityData;
     delete _accelerometer;
     delete _rotationSensor;
-    delete _orientationSensor;
     delete _networkManager;
 }
