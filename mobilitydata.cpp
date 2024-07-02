@@ -101,7 +101,7 @@ void MobilityData::stopCollecting() {
 }
 
 bool MobilityData::sendRegisteredData() {
-    QByteArray jsonData = mobilityDataToJson();
+    QByteArray jsonData = getFormattedData();
 
     QNetworkRequest request;
     request.setUrl(QUrl("http://localhost:5000/receive-mobility-data"));
@@ -152,18 +152,20 @@ void MobilityData::setBusLine(QString busLineId) {
     _busLine = busLineId;
 }
 
-QByteArray MobilityData::mobilityDataToJson() {
-    QJsonArray array;
-    array.append(QJsonObject{{"bus_line", _busLine}});
+QByteArray MobilityData::getFormattedData() {
+    QJsonObject data;
+    data.insert("bus_line", _busLine);
 
-    for(const auto& obj: *_mobilityData) {
-        array.append(obj);
+    QJsonArray points;
+    for(const auto& point: *_mobilityData) {
+        points.append(point);
     }
+    data.insert("points", points);
 
-    QJsonDocument document(array);
-    QByteArray jsonData = document.toJson(QJsonDocument::Compact);
+    QJsonDocument document(data);
+    QByteArray formattedData = document.toJson(QJsonDocument::Compact);
 
-    return jsonData;
+    return formattedData;
 }
 
 MobilityData::~MobilityData() {

@@ -27,7 +27,7 @@ public:
     explicit MobilityData(QObject *parent = nullptr);
     ~MobilityData();
 
-    QByteArray mobilityDataToJson();
+    QByteArray getFormattedData();
 
 public slots:
     void registerAccelerometerReading();
