@@ -18,7 +18,6 @@ MobilityData::MobilityData(QObject *parent)
     _rotationSensor = new QRotationSensor(this);
     connect(_rotationSensor, SIGNAL(readingChanged()), this, SLOT(registerRotationReading()));
 
-    m_accessToPosition = false;
     _source = QGeoPositionInfoSource::createDefaultSource(this);
 
     if(_source) {
@@ -28,7 +27,6 @@ MobilityData::MobilityData(QObject *parent)
     }
 
     _networkManager = new QNetworkAccessManager(this);
-
 }
 
 void MobilityData::registerAccelerometerReading() {

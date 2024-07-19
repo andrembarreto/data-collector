@@ -21,7 +21,6 @@ class MobilityData : public QObject
     Q_PROPERTY(QVariantMap accelerationValues READ getAccelerationValues NOTIFY accelerationValuesChanged)
     Q_PROPERTY(QVariantMap rotationValues READ getRotationValues NOTIFY rotationValuesChanged)
     Q_PROPERTY(QVariantMap currentCoordinates READ getCurrentCoordinates NOTIFY currentCoordinatesChanged)
-    Q_PROPERTY(bool accessToPosition MEMBER m_accessToPosition NOTIFY accessToPositionChanged)
     Q_PROPERTY(bool currentlyCollecting MEMBER m_currentlyCollecting NOTIFY collectionStatusChanged)
 public:
     explicit MobilityData(QObject *parent = nullptr);
@@ -56,7 +55,6 @@ private:
     QVariantMap m_accelerationValues;
     QVariantMap m_rotationValues;
     QVariantMap m_currentCoordinates;
-    bool m_accessToPosition;
     bool m_currentlyCollecting;
 
     QVector<QJsonObject> *_mobilityData;
