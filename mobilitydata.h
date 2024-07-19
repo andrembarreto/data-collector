@@ -68,6 +68,7 @@ private:
     void initializeRotationValues();
     void initializeCoordinateValues();
     void addMobilityDataEntry(QVariantMap accelerationValues, QVariantMap rotationValues, QGeoPositionInfo geoPositionInfo);
+    bool _sendData(const QByteArray &data) const;
 };
 
 #endif // MOBILITYDATA_H

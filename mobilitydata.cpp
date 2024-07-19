@@ -99,18 +99,20 @@ void MobilityData::stopCollecting() {
 }
 
 bool MobilityData::sendRegisteredData() {
-    QByteArray jsonData = getFormattedData();
+    return _sendData(getFormattedData());
+}
 
+bool MobilityData::_sendData(const QByteArray &data) const {
     QNetworkRequest request;
     request.setUrl(QUrl("http://localhost:5000/receive-mobility-data"));
     request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
-    request.setHeader(QNetworkRequest::ContentLengthHeader, jsonData.size());
+    request.setHeader(QNetworkRequest::ContentLengthHeader, data.size());
 
-    QNetworkReply *reply = _networkManager->post(request, jsonData);
+    QNetworkReply *reply = _networkManager->post(request, data);
     if(!reply->waitForReadyRead(10000))
-        return false;
+       return false;
     else {
-        if(reply->readAll().contains(RECEIVE_SUCCESS)) return true;
+       if(reply->readAll().contains(RECEIVE_SUCCESS)) return true;
     }
     return false;
 }
