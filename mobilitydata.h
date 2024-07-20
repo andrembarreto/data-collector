@@ -15,6 +15,9 @@
 #include <QNetworkRequest>
 #include <QNetworkReply>
 
+#define LOGS_DIR "journey_logs"
+
+
 class MobilityData : public QObject
 {
     Q_OBJECT
@@ -22,6 +25,8 @@ class MobilityData : public QObject
     Q_PROPERTY(QVariantMap rotationValues READ getRotationValues NOTIFY rotationValuesChanged)
     Q_PROPERTY(QVariantMap currentCoordinates READ getCurrentCoordinates NOTIFY currentCoordinatesChanged)
     Q_PROPERTY(bool currentlyCollecting MEMBER m_currentlyCollecting NOTIFY collectionStatusChanged)
+    Q_PROPERTY(QStringList journeyLogs READ getJourneyLogs CONSTANT)
+
 public:
     explicit MobilityData(QObject *parent = nullptr);
     ~MobilityData();
@@ -36,6 +41,7 @@ public slots:
     bool sendRegisteredData();
     void discardRegisteredData();
     void setBusLine(QString busLineId);
+    bool sendLoggedData(int index);
 
     void startCollecting();
     void stopCollecting();
@@ -43,6 +49,7 @@ public slots:
     QVariantMap getAccelerationValues();
     QVariantMap getRotationValues();
     QVariantMap getCurrentCoordinates();
+    QStringList getJourneyLogs();
 
 signals:
     void accelerationValuesChanged(QVariantMap newValues);
@@ -56,6 +63,7 @@ private:
     QVariantMap m_rotationValues;
     QVariantMap m_currentCoordinates;
     bool m_currentlyCollecting;
+    QStringList m_journeyLogs;
 
     QVector<QJsonObject> *_mobilityData;
     QAccelerometer *_accelerometer;
@@ -69,6 +77,7 @@ private:
     void initializeCoordinateValues();
     void addMobilityDataEntry(QVariantMap accelerationValues, QVariantMap rotationValues, QGeoPositionInfo geoPositionInfo);
     bool _sendData(const QByteArray &data) const;
+    void _logRecords();
 };
 
 #endif // MOBILITYDATA_H

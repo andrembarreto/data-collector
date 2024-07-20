@@ -71,8 +71,11 @@ Window {
             Column {
                 anchors.fill: parent
                 topPadding: height * 0.025
+
                 Button {
                     anchors.horizontalCenter: parent.horizontalCenter
+                    height: parent.height * 0.1
+                    width: parent.width
                     background: Rectangle {
                         color: "transparent"
                         anchors.fill: parent
@@ -97,6 +100,8 @@ Window {
 
         Popup {
             id: savedTripsPopup
+            property int chosenLogIndex
+
             anchors.centerIn: parent
             width: parent.width * 0.5
             height: parent.height * 0.4
@@ -108,50 +113,124 @@ Window {
                 radius: width * 0.02
             }
 
-            Column {
+            clip: true
+
+            StackView {
+                id: stack
                 anchors.fill: parent
-                padding: height * 0.05
-                spacing: height * 0.05
+                initialItem: pageLogs
+            }
 
-                Text {
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    width: parent.width
-                    height: parent.height * 0.075
+            Component {
+                id: pageLogs
 
-                    text: qsTr("Trajetos salvos")
-                    color: "silver"
-                    font.pointSize: 20
-                    fontSizeMode: Text.Fit
-                    font.weight: Font.DemiBold
-                    horizontalAlignment: Text.AlignHCenter
-                    verticalAlignment: Text.AlignVCenter
-                }
-
-                ListView {
-                    id: logs
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    width: parent.width
-                    height: parent.height * 0.8
-                    spacing: height * 0.05
-
-                    model: ["arquivo 1", "arquivo 2", "arquivo 3"]
-                    delegate: Rectangle {
-                        color: "transparent"
-                        anchors.horizontalCenter: parent.horizontalCenter
-                        height: parent.height * 0.2
-                        width: parent.width * 0.6
+                Page {
+                    Column {
+                        anchors.fill: parent
+                        padding: height * 0.05
+                        spacing: height * 0.05
 
                         Text {
-                            text: modelData
-                            anchors.fill: parent
-                            font.pointSize: 14
-                            color: control.pressed ? "yellow" : "silver"
+                            anchors.horizontalCenter: parent.horizontalCenter
+                            width: parent.width
+                            height: parent.height * 0.075
+
+                            text: qsTr("Trajetos salvos")
+                            color: "silver"
+                            font.pointSize: 20
+                            fontSizeMode: Text.Fit
+                            font.weight: Font.DemiBold
                             horizontalAlignment: Text.AlignHCenter
                             verticalAlignment: Text.AlignVCenter
                         }
-                        MouseArea {
-                            id: control
+
+                        ListView {
+                            id: logs
+                            anchors.horizontalCenter: parent.horizontalCenter
+                            width: parent.width
+                            height: parent.height * 0.8
+                            spacing: height * 0.05
+
+                            model: mobilityData.journeyLogs
+                            delegate: Rectangle {
+                                color: "transparent"
+                                anchors.horizontalCenter: parent.horizontalCenter
+                                height: parent.height * 0.2
+                                width: parent.width * 0.6
+
+                                Text {
+                                    text: modelData
+                                    anchors.fill: parent
+                                    font.pointSize: 14
+                                    color: control.pressed ? "yellow" : "silver"
+                                    horizontalAlignment: Text.AlignHCenter
+                                    verticalAlignment: Text.AlignVCenter
+                                }
+                                MouseArea {
+                                    id: control
+                                    anchors.fill: parent
+                                    onClicked: {
+                                        savedTripsPopup.chosenLogIndex = index;
+                                        stack.push(pageSend);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            Component {
+                id: pageSend
+
+                Page {
+                    Button {
+                        anchors {
+                            left: parent.left
+                            top: parent.top
+                            topMargin: height * 0.25
+                            leftMargin: width * 0.25
+                        }
+                        width: parent.width * 0.3
+                        height: parent.height * 0.2
+
+                        Text {
                             anchors.fill: parent
+                            text: qsTr("Voltar")
+                            color: "silver"
+                            font.pointSize: 12
+                            horizontalAlignment: Text.AlignHCenter
+                            verticalAlignment: Text.AlignVCenter
+                        }
+                        onClicked: stack.pop()
+                    }
+                    Text {
+                        anchors.centerIn: parent
+                        text: qsTr("Deseja enviar o conteúdo de \n") + mobilityData.journeyLogs[savedTripsPopup.chosenLogIndex] + "?"
+                        font.pointSize: 14
+                        color: "silver"
+                    }
+                    Button {
+                        anchors {
+                            right: parent.right
+                            bottom: parent.bottom
+                            bottomMargin: height * 0.25
+                            rightMargin: width * 0.25
+                        }
+                        width: parent.width * 0.3
+                        height: parent.height * 0.2
+
+                        Text {
+                            anchors.fill: parent
+                            text: qsTr("Sim")
+                            color: "silver"
+                            font.pointSize: 12
+                            horizontalAlignment: Text.AlignHCenter
+                            verticalAlignment: Text.AlignVCenter
+                        }
+                        onClicked: {
+                            mobilityData.sendLoggedData(savedTripsPopup.chosenLogIndex);
+                            savedTripsPopup.close();
                         }
                     }
                 }
