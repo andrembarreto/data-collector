@@ -2,6 +2,7 @@ import QtQuick
 import QtQuick.Window
 import QtQuick.VirtualKeyboard
 import QtQuick.Controls
+import QtQuick.Controls.Material
 
 import "components"
 
@@ -10,12 +11,14 @@ Window {
     width: 1080
     height: 2340
     visible: true
-    title: qsTr("Hello World")
+
+    Material.theme: Material.Dark
+    Material.accent: Material.Purple
 
     Rectangle {
         id: root
         anchors.fill: parent
-        color: "#000000"
+        color: "black"
 
         Text {
             id: title
@@ -35,6 +38,124 @@ Window {
             font.weight: Font.Bold
             horizontalAlignment: Text.AlignHCenter
             verticalAlignment: Text.AlignVCenter
+        }
+
+        Button {
+            anchors {
+                top: parent.top
+                right: parent.right
+            }
+            background: Rectangle {
+                anchors.fill: parent
+                color: "black"
+            }
+            width: parent.width * 0.1
+            height: parent.height * 0.05
+            icon.source: "qrc:icons/bars-solid.svg"
+            icon.color: "silver"
+            onClicked: configsMenu.open()
+        }
+
+        Drawer {
+            id: configsMenu
+            edge: Qt.RightEdge
+            height: parent.height
+            width: parent.width * 0.3
+            background: Rectangle {
+                anchors.fill: parent
+                border.color: "#150050"
+                border.width: width * 0.01
+                color: "black"
+            }
+
+            Column {
+                anchors.fill: parent
+                topPadding: height * 0.025
+                Button {
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    background: Rectangle {
+                        color: "transparent"
+                        anchors.fill: parent
+                    }
+                    Text {
+                        anchors.centerIn: parent
+                        text: qsTr("Trajetos salvos")
+                        color: "silver"
+                        font.pointSize: 16
+                        font.weight: Font.Medium
+                        verticalAlignment: Text.AlignVCenter
+                        horizontalAlignment: Text.AlignRight
+                    }
+
+                    onClicked: {
+                        configsMenu.close();
+                        savedTripsPopup.open();
+                    }
+                }
+            }
+        }
+
+        Popup {
+            id: savedTripsPopup
+            anchors.centerIn: parent
+            width: parent.width * 0.5
+            height: parent.height * 0.4
+            background: Rectangle {
+                anchors.fill: parent
+                color: "black"
+                border.width: width * 0.02
+                border.color: "#150050"
+                radius: width * 0.02
+            }
+
+            Column {
+                anchors.fill: parent
+                padding: height * 0.05
+                spacing: height * 0.05
+
+                Text {
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    width: parent.width
+                    height: parent.height * 0.075
+
+                    text: qsTr("Trajetos salvos")
+                    color: "silver"
+                    font.pointSize: 20
+                    fontSizeMode: Text.Fit
+                    font.weight: Font.DemiBold
+                    horizontalAlignment: Text.AlignHCenter
+                    verticalAlignment: Text.AlignVCenter
+                }
+
+                ListView {
+                    id: logs
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    width: parent.width
+                    height: parent.height * 0.8
+                    spacing: height * 0.05
+
+                    model: ["arquivo 1", "arquivo 2", "arquivo 3"]
+                    delegate: Rectangle {
+                        color: "transparent"
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        height: parent.height * 0.2
+                        width: parent.width * 0.6
+
+                        Text {
+                            text: modelData
+                            anchors.fill: parent
+                            font.pointSize: 14
+                            color: control.pressed ? "yellow" : "silver"
+                            horizontalAlignment: Text.AlignHCenter
+                            verticalAlignment: Text.AlignVCenter
+                        }
+                        MouseArea {
+                            id: control
+                            anchors.fill: parent
+                        }
+                    }
+                }
+            }
         }
 
         Grid {
