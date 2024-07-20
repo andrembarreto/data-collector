@@ -71,6 +71,7 @@ private:
     QGeoPositionInfoSource *_source;
     QNetworkAccessManager *_networkManager;
     QString _busLine;
+    QMap<QString, QByteArray> _journeyLogs;
 
     void initializeAccelerationValues();
     void initializeRotationValues();
@@ -78,6 +79,7 @@ private:
     void addMobilityDataEntry(QVariantMap accelerationValues, QVariantMap rotationValues, QGeoPositionInfo geoPositionInfo);
     bool _sendData(const QByteArray &data) const;
     void _logRecords();
+    QMap<QString, QByteArray> _retrieveJourneyLogs();
 };
 
 #endif // MOBILITYDATA_H

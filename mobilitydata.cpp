@@ -1,4 +1,6 @@
 #include "mobilitydata.h"
+#include <QDateTime>
+
 
 #define RECEIVE_SUCCESS 0
 
@@ -11,6 +13,8 @@ MobilityData::MobilityData(QObject *parent)
     initializeRotationValues();
     initializeCoordinateValues();
     m_currentlyCollecting = false;
+    _journeyLogs = _retrieveJourneyLogs();
+    m_journeyLogs = _journeyLogs.keys();
 
     _accelerometer = new QAccelerometer(this);
     connect(_accelerometer, SIGNAL(readingChanged()), this, SLOT(registerAccelerometerReading()));
@@ -94,6 +98,7 @@ void MobilityData::stopCollecting() {
     _rotationSensor->stop();
     _source->stopUpdates();
 
+    _logRecords();
     m_currentlyCollecting = false;
     emit collectionStatusChanged(m_currentlyCollecting);
 }
@@ -117,6 +122,15 @@ bool MobilityData::_sendData(const QByteArray &data) const {
     return false;
 }
 
+bool MobilityData::sendLoggedData(int index) {
+    if(index >= m_journeyLogs.size()) {
+       return false;
+    }
+    else {
+       return _sendData(_journeyLogs.value(m_journeyLogs[index]));
+    }
+}
+
 void MobilityData::discardRegisteredData() {
     _mobilityData->clear();
 }
@@ -133,6 +147,10 @@ QVariantMap MobilityData::getCurrentCoordinates() {
     return m_currentCoordinates;
 }
 
+QStringList MobilityData::getJourneyLogs() {
+    return m_journeyLogs;
+}
+
 void MobilityData::initializeAccelerationValues() {
     m_accelerationValues = {{"x", 0.0}, {"y", 0.0}, {"z", 0.0}};
     emit accelerationValuesChanged(m_accelerationValues);
@@ -146,6 +164,39 @@ void MobilityData::initializeRotationValues() {
 void MobilityData::initializeCoordinateValues() {
     m_currentCoordinates = {{"latitude", ""}, {"longitude", ""}};
     emit currentCoordinatesChanged(m_currentCoordinates);
+}
+
+QMap<QString, QByteArray> MobilityData::_retrieveJourneyLogs() {
+    QMap<QString, QByteArray> journeyLogs;
+    QDir logsDir(LOGS_DIR);
+
+    if(logsDir.exists()) {
+        QStringList filters;
+        filters << "*.log";
+
+        logsDir.setNameFilters(filters);
+        logsDir.setFilter(QDir::Files);
+
+        QFileInfoList fileList = logsDir.entryInfoList();
+        if(!fileList.isEmpty()) {
+            for(const auto &fileInfo : fileList) {
+                QString name = fileInfo.fileName();
+                QFile file_(fileInfo.absoluteFilePath());
+                if(file_.open(QIODevice::ReadOnly)) {
+                    QByteArray data = file_.readAll();
+                    file_.close();
+                    journeyLogs.insert(name, data);
+                }
+            }
+        }
+        else {
+            qDebug() << "nao tem arquivos";
+        }
+    }
+    else {
+        qDebug() << "nao existe dir";
+    }
+    return journeyLogs;
 }
 
 void MobilityData::setBusLine(QString busLineId) {
@@ -166,6 +217,31 @@ QByteArray MobilityData::getFormattedData() {
     QByteArray formattedData = document.toJson(QJsonDocument::Compact);
 
     return formattedData;
+}
+
+void MobilityData::_logRecords() {
+    QDir logsDir(LOGS_DIR);
+    if(!logsDir.exists()) {
+        if(!logsDir.mkpath(LOGS_DIR)) {
+            qDebug() << "não deu";
+        }
+        else {
+            auto timestamp = QDateTime::currentDateTime().toString(Qt::ISODate);
+            QFile logFile(QString(LOGS_DIR) + QString("records_%1.log").arg(timestamp));
+            if(logFile.open(QIODevice::WriteOnly)) {
+                logFile.write(getFormattedData());
+                logFile.close();
+            }
+        }
+    }
+    else {
+        auto timestamp = QDateTime::currentDateTime().toString(Qt::ISODate);
+        QFile logFile(QString(LOGS_DIR) + QString("records_%1.log").arg(timestamp));
+        if(logFile.open(QIODevice::WriteOnly)) {
+            logFile.write(getFormattedData());
+            logFile.close();
+        }
+    }
 }
 
 MobilityData::~MobilityData() {
