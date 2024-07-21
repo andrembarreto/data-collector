@@ -1,6 +1,5 @@
 import QtQuick
 import QtQuick.Window
-import QtQuick.VirtualKeyboard
 import QtQuick.Controls
 import QtQuick.Controls.Material
 
@@ -102,8 +101,10 @@ Window {
             id: savedTripsPopup
             property int chosenLogIndex
 
+            onOpened: stack.replace(pageLogs)
+
             anchors.centerIn: parent
-            width: parent.width * 0.5
+            width: parent.width * 0.8
             height: parent.height * 0.4
             background: Rectangle {
                 anchors.fill: parent
@@ -153,16 +154,17 @@ Window {
 
                             model: mobilityData.journeyLogs
                             delegate: Rectangle {
-                                color: "transparent"
+                                color: control.pressed ? "transparent": "white"
                                 anchors.horizontalCenter: parent.horizontalCenter
-                                height: parent.height * 0.2
-                                width: parent.width * 0.6
+                                height: logs.height * 0.2
+                                width: logs.width
 
                                 Text {
                                     text: modelData
                                     anchors.fill: parent
                                     font.pointSize: 14
-                                    color: control.pressed ? "yellow" : "silver"
+                                    fontSizeMode: Text.Fit
+                                    color: control.pressed ? "yellow" : "black"
                                     horizontalAlignment: Text.AlignHCenter
                                     verticalAlignment: Text.AlignVCenter
                                 }
@@ -208,6 +210,7 @@ Window {
                         anchors.centerIn: parent
                         text: qsTr("Deseja enviar o conteúdo de \n") + mobilityData.journeyLogs[savedTripsPopup.chosenLogIndex] + "?"
                         font.pointSize: 14
+                        fontSizeMode: Text.Fit
                         color: "silver"
                     }
                     Button {
@@ -357,10 +360,6 @@ Window {
     Popup {
         id: setBusLinePopup
         visible: false
-        closePolicy: "NoAutoClose"
-        onAboutToHide: {
-            mobilityData.setBusLine(busLineInput.text);
-        }
 
         anchors.centerIn: parent
         width: parent.width * 0.75
@@ -413,6 +412,7 @@ Window {
                 color: "silver"
                 radius: width * 0.02
             }
+            onAccepted: mobilityData.setBusLine(busLineInput.text)
         }
 
         Button {
