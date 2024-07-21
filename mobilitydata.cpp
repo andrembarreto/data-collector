@@ -227,7 +227,7 @@ void MobilityData::_logRecords() {
         }
         else {
             auto timestamp = QDateTime::currentDateTime().toString(Qt::ISODate);
-            QFile logFile(QString(LOGS_DIR) + QString("records_%1.log").arg(timestamp));
+            QFile logFile(QString(LOGS_DIR) + QString("/records_%1.log").arg(timestamp));
             if(logFile.open(QIODevice::WriteOnly)) {
                 logFile.write(getFormattedData());
                 logFile.close();
@@ -236,7 +236,7 @@ void MobilityData::_logRecords() {
     }
     else {
         auto timestamp = QDateTime::currentDateTime().toString(Qt::ISODate);
-        QFile logFile(QString(LOGS_DIR) + QString("records_%1.log").arg(timestamp));
+        QFile logFile(QString(LOGS_DIR) + QString("/records_%1.log").arg(timestamp));
         if(logFile.open(QIODevice::WriteOnly)) {
             logFile.write(getFormattedData());
             logFile.close();
