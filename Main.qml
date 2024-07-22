@@ -1,7 +1,7 @@
 import QtQuick
 import QtQuick.Window
-import QtQuick.VirtualKeyboard
 import QtQuick.Controls
+import QtQuick.Controls.Material
 
 import "components"
 
@@ -10,41 +10,14 @@ Window {
     width: 1080
     height: 2340
     visible: true
-    title: qsTr("Hello World")
 
-    InputPanel {
-        id: inputPanel
-        z: 99
-        x: 0
-        y: window.height
-        width: window.width
-
-        states: State {
-            name: "visible"
-            when: inputPanel.active
-            PropertyChanges {
-                target: inputPanel
-                y: window.height - inputPanel.height
-            }
-        }
-        transitions: Transition {
-            from: ""
-            to: "visible"
-            reversible: true
-            ParallelAnimation {
-                NumberAnimation {
-                    properties: "y"
-                    duration: 250
-                    easing.type: Easing.InOutQuad
-                }
-            }
-        }
-    }
+    Material.theme: Material.Dark
+    Material.accent: Material.Purple
 
     Rectangle {
         id: root
         anchors.fill: parent
-        color: "#000000"
+        color: "black"
 
         Text {
             id: title
@@ -64,6 +37,207 @@ Window {
             font.weight: Font.Bold
             horizontalAlignment: Text.AlignHCenter
             verticalAlignment: Text.AlignVCenter
+        }
+
+        Button {
+            anchors {
+                top: parent.top
+                right: parent.right
+            }
+            background: Rectangle {
+                anchors.fill: parent
+                color: "black"
+            }
+            width: parent.width * 0.1
+            height: parent.height * 0.05
+            icon.source: "qrc:icons/bars-solid.svg"
+            icon.color: "silver"
+            onClicked: configsMenu.open()
+        }
+
+        Drawer {
+            id: configsMenu
+            edge: Qt.RightEdge
+            height: parent.height
+            width: parent.width * 0.3
+            background: Rectangle {
+                anchors.fill: parent
+                border.color: "#150050"
+                border.width: width * 0.01
+                color: "black"
+            }
+
+            Column {
+                anchors.fill: parent
+                topPadding: height * 0.025
+
+                Button {
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    height: parent.height * 0.1
+                    width: parent.width
+                    background: Rectangle {
+                        color: "transparent"
+                        anchors.fill: parent
+                    }
+                    Text {
+                        anchors.centerIn: parent
+                        text: qsTr("Trajetos salvos")
+                        color: "silver"
+                        font.pointSize: 16
+                        font.weight: Font.Medium
+                        verticalAlignment: Text.AlignVCenter
+                        horizontalAlignment: Text.AlignRight
+                    }
+
+                    onClicked: {
+                        configsMenu.close();
+                        savedTripsPopup.open();
+                    }
+                }
+            }
+        }
+
+        Popup {
+            id: savedTripsPopup
+            property int chosenLogIndex
+
+            onOpened: stack.replace(pageLogs)
+
+            anchors.centerIn: parent
+            width: parent.width * 0.8
+            height: parent.height * 0.4
+            background: Rectangle {
+                anchors.fill: parent
+                color: "black"
+                border.width: width * 0.02
+                border.color: "#150050"
+                radius: width * 0.02
+            }
+
+            clip: true
+
+            StackView {
+                id: stack
+                anchors.fill: parent
+                initialItem: pageLogs
+            }
+
+            Component {
+                id: pageLogs
+
+                Page {
+                    Column {
+                        anchors.fill: parent
+                        padding: height * 0.05
+                        spacing: height * 0.05
+
+                        Text {
+                            anchors.horizontalCenter: parent.horizontalCenter
+                            width: parent.width
+                            height: parent.height * 0.075
+
+                            text: qsTr("Trajetos salvos")
+                            color: "silver"
+                            font.pointSize: 20
+                            fontSizeMode: Text.Fit
+                            font.weight: Font.DemiBold
+                            horizontalAlignment: Text.AlignHCenter
+                            verticalAlignment: Text.AlignVCenter
+                        }
+
+                        ListView {
+                            id: logs
+                            anchors.horizontalCenter: parent.horizontalCenter
+                            width: parent.width
+                            height: parent.height * 0.8
+                            spacing: height * 0.05
+
+                            model: mobilityData.journeyLogs
+                            delegate: Rectangle {
+                                color: control.pressed ? "transparent": "white"
+                                anchors.horizontalCenter: parent.horizontalCenter
+                                height: logs.height * 0.2
+                                width: logs.width
+
+                                Text {
+                                    text: modelData
+                                    anchors.fill: parent
+                                    font.pointSize: 14
+                                    fontSizeMode: Text.Fit
+                                    color: control.pressed ? "yellow" : "black"
+                                    horizontalAlignment: Text.AlignHCenter
+                                    verticalAlignment: Text.AlignVCenter
+                                }
+                                MouseArea {
+                                    id: control
+                                    anchors.fill: parent
+                                    onClicked: {
+                                        savedTripsPopup.chosenLogIndex = index;
+                                        stack.push(pageSend);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            Component {
+                id: pageSend
+
+                Page {
+                    Button {
+                        anchors {
+                            left: parent.left
+                            top: parent.top
+                            topMargin: height * 0.25
+                            leftMargin: width * 0.25
+                        }
+                        width: parent.width * 0.3
+                        height: parent.height * 0.2
+
+                        Text {
+                            anchors.fill: parent
+                            text: qsTr("Voltar")
+                            color: "silver"
+                            font.pointSize: 12
+                            horizontalAlignment: Text.AlignHCenter
+                            verticalAlignment: Text.AlignVCenter
+                        }
+                        onClicked: stack.pop()
+                    }
+                    Text {
+                        anchors.centerIn: parent
+                        text: qsTr("Deseja enviar o conteúdo de \n") + mobilityData.journeyLogs[savedTripsPopup.chosenLogIndex] + "?"
+                        font.pointSize: 14
+                        fontSizeMode: Text.Fit
+                        color: "silver"
+                    }
+                    Button {
+                        anchors {
+                            right: parent.right
+                            bottom: parent.bottom
+                            bottomMargin: height * 0.25
+                            rightMargin: width * 0.25
+                        }
+                        width: parent.width * 0.3
+                        height: parent.height * 0.2
+
+                        Text {
+                            anchors.fill: parent
+                            text: qsTr("Sim")
+                            color: "silver"
+                            font.pointSize: 12
+                            horizontalAlignment: Text.AlignHCenter
+                            verticalAlignment: Text.AlignVCenter
+                        }
+                        onClicked: {
+                            mobilityData.sendLoggedData(savedTripsPopup.chosenLogIndex);
+                            savedTripsPopup.close();
+                        }
+                    }
+                }
+            }
         }
 
         Grid {
@@ -186,10 +360,6 @@ Window {
     Popup {
         id: setBusLinePopup
         visible: false
-        closePolicy: "NoAutoClose"
-        onAboutToHide: {
-            mobilityData.setBusLine(busLineInput.text);
-        }
 
         anchors.centerIn: parent
         width: parent.width * 0.75
@@ -242,6 +412,7 @@ Window {
                 color: "silver"
                 radius: width * 0.02
             }
+            onAccepted: mobilityData.setBusLine(busLineInput.text)
         }
 
         Button {

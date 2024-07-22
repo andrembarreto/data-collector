@@ -15,14 +15,18 @@
 #include <QNetworkRequest>
 #include <QNetworkReply>
 
+#define LOGS_DIR "journey_logs"
+
+
 class MobilityData : public QObject
 {
     Q_OBJECT
     Q_PROPERTY(QVariantMap accelerationValues READ getAccelerationValues NOTIFY accelerationValuesChanged)
     Q_PROPERTY(QVariantMap rotationValues READ getRotationValues NOTIFY rotationValuesChanged)
     Q_PROPERTY(QVariantMap currentCoordinates READ getCurrentCoordinates NOTIFY currentCoordinatesChanged)
-    Q_PROPERTY(bool accessToPosition MEMBER m_accessToPosition NOTIFY accessToPositionChanged)
     Q_PROPERTY(bool currentlyCollecting MEMBER m_currentlyCollecting NOTIFY collectionStatusChanged)
+    Q_PROPERTY(QStringList journeyLogs READ getJourneyLogs CONSTANT)
+
 public:
     explicit MobilityData(QObject *parent = nullptr);
     ~MobilityData();
@@ -37,6 +41,7 @@ public slots:
     bool sendRegisteredData();
     void discardRegisteredData();
     void setBusLine(QString busLineId);
+    bool sendLoggedData(int index);
 
     void startCollecting();
     void stopCollecting();
@@ -44,6 +49,7 @@ public slots:
     QVariantMap getAccelerationValues();
     QVariantMap getRotationValues();
     QVariantMap getCurrentCoordinates();
+    QStringList getJourneyLogs();
 
 signals:
     void accelerationValuesChanged(QVariantMap newValues);
@@ -56,8 +62,8 @@ private:
     QVariantMap m_accelerationValues;
     QVariantMap m_rotationValues;
     QVariantMap m_currentCoordinates;
-    bool m_accessToPosition;
     bool m_currentlyCollecting;
+    QStringList m_journeyLogs;
 
     QVector<QJsonObject> *_mobilityData;
     QAccelerometer *_accelerometer;
@@ -65,11 +71,15 @@ private:
     QGeoPositionInfoSource *_source;
     QNetworkAccessManager *_networkManager;
     QString _busLine;
+    QMap<QString, QByteArray> _journeyLogs;
 
     void initializeAccelerationValues();
     void initializeRotationValues();
     void initializeCoordinateValues();
     void addMobilityDataEntry(QVariantMap accelerationValues, QVariantMap rotationValues, QGeoPositionInfo geoPositionInfo);
+    bool _sendData(const QByteArray &data) const;
+    void _logRecords();
+    QMap<QString, QByteArray> _retrieveJourneyLogs();
 };
 
 #endif // MOBILITYDATA_H

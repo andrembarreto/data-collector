@@ -3,6 +3,7 @@ cmake_minimum_required(VERSION 3.16)
 project(data-collector VERSION 0.1 LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_AUTORCC ON)
 
 find_package(Qt6 6.5 REQUIRED COMPONENTS Quick Sensors Positioning Network)
 
@@ -18,6 +19,7 @@ qt_add_qml_module(appdata-collector
     QML_FILES Main.qml
     SOURCES mobilitydata.h mobilitydata.cpp
     QML_FILES components/DataField.qml
+    RESOURCES qml.qrc
 )
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.

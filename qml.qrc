@@ -1,0 +1,6 @@
+<RCC>
+    <qresource prefix="/">
+        <file>icons/bars-solid.svg</file>
+        <file>icons/floppy-disk-regular.svg</file>
+    </qresource>
+</RCC>
